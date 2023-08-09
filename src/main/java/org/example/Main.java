@@ -1,19 +1,57 @@
 package org.example;
 
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
+import org.example.bookmanagement.Author;
+import org.example.bookmanagement.Book;
+import org.example.bookmanagement.Genre;
+import org.example.catalogsystem.CatalogImpl;
+import org.example.usermanagement.Librarian;
+import org.example.usermanagement.Member;
+
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) {
-        // Press Alt+Enter with your caret at the highlighted text to see how
-        // IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
 
-        // Press Shift+F10 or click the green arrow button in the gutter to run the code.
-        for (int i = 1; i <= 5; i++) {
+        Member member1 = new
+                Member("Ali", "Moradi", "AliM", "alim", 1);
+        Member member2 = new
+                Member("Hojjat", "Rezaei", "HojjatRE", "hojjatre", 2);
 
-            // Press Shift+F9 to start debugging your code. We have set one breakpoint
-            // for you, but you can always add more by pressing Ctrl+F8.
-            System.out.println("i = " + i);
-        }
+        Member member3 = new
+                Member("Reza", "Hasani", "RezaH021", "rezah021", 3);
+
+
+        Librarian librarian = new
+                Librarian("Ahmad", "Radad", "AhmadRa", "ahmadra", 1);
+
+
+        Author author1 = new Author("JRR", "Tolkien");
+        Author author2 = new Author("Dan", "Brown");
+        Author author3 = new Author("JK", "Rowling");
+
+        CatalogImpl catalog = new CatalogImpl();
+
+        Book book1 = new Book("The Hobbit", author1, Genre.FANTASY);
+        catalog.addBook(book1);
+        Book book2 = new Book("The Da Vinci Code", author2, Genre.MYSTERY);
+        catalog.addBook(book2);
+        Book book3 = new Book("Harry Potter and the Chamber of Secrets", author3, Genre.FANTASY);
+        catalog.addBook(book3);
+        Book book4 = new Book("Harry Potter and the Philosopher's Stone", author3, Genre.FANTASY);
+        catalog.addBook(book4);
+
+
+//        Scanner scanner = new Scanner(System.in);
+//        System.out.println("Sign in / Sing up:1/2: ");
+//        String str = scanner.next();
+//        if(str.equals("1")){
+//            System.out.println("Username: ");
+//            String username = scanner.next();
+//            System.out.println("Password: ");
+//            String password = scanner.next();
+//
+//        }
+//        System.out.println("Search by title(1) , by Author(2): ");
+
     }
 }
