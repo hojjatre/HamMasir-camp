@@ -6,24 +6,28 @@ import org.example.bookmanagement.Genre;
 import org.example.catalogsystem.CatalogImpl;
 import org.example.usermanagement.Librarian;
 import org.example.usermanagement.Member;
+import org.example.usermanagement.UserSystem;
 
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
 
+        UserSystem userSystem = new UserSystem();
+
         Member member1 = new
                 Member("Ali", "Moradi", "AliM", "alim", 1);
+        userSystem.addUser(member1);
         Member member2 = new
                 Member("Hojjat", "Rezaei", "HojjatRE", "hojjatre", 2);
-
+        userSystem.addUser(member2);
         Member member3 = new
                 Member("Reza", "Hasani", "RezaH021", "rezah021", 3);
-
+        userSystem.addUser(member3);
 
         Librarian librarian = new
                 Librarian("Ahmad", "Radad", "AhmadRa", "ahmadra", 1);
-
+        userSystem.addUser(librarian);
 
         Author author1 = new Author("JRR", "Tolkien");
         Author author2 = new Author("Dan", "Brown");
@@ -41,16 +45,20 @@ public class Main {
         catalog.addBook(book4);
 
 
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("Sign in / Sing up:1/2: ");
-//        String str = scanner.next();
-//        if(str.equals("1")){
-//            System.out.println("Username: ");
-//            String username = scanner.next();
-//            System.out.println("Password: ");
-//            String password = scanner.next();
-//
-//        }
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Sign in / Sing up:1/2: ");
+        String str = scanner.next();
+        if(str.equals("1")){
+            System.out.println("Username: ");
+            String inputUsername = scanner.next();
+            System.out.println("Password: ");
+            String inputPassword = scanner.next();
+            if (userSystem.isUserInSystem(inputUsername, inputPassword)) {
+                System.out.println(userSystem.getUserType(inputUsername) + " is in the system.");
+            } else {
+                System.out.println("Invalid credentials.");
+            }
+        }
 //        System.out.println("Search by title(1) , by Author(2): ");
 
     }

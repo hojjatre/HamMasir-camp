@@ -8,6 +8,21 @@ public class Member extends User{
         this.memberID = memberID;
     }
 
+    @Override
+    public boolean authenticate(String inputUsername, String inputPassword) {
+        return getUsername().equals(inputUsername) && getPassword().equals(inputPassword);
+    }
+
+    @Override
+    public String displayUserInfo() {
+        return "Member{" +
+                "firstname='" + getFirstname() + '\'' +
+                ", lastname='" + getLastname() + '\'' +
+                ", username='" + getUsername() + '\'' +
+                ", member id='" + getMemberID() + '\'' +
+                '}';
+    }
+
     public int getMemberID() {
         return memberID;
     }

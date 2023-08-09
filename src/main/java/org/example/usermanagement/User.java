@@ -1,6 +1,6 @@
 package org.example.usermanagement;
 
-public class User {
+public abstract class User {
     private String firstname;
     private String lastname;
     private String username;
@@ -11,10 +11,6 @@ public class User {
         this.lastname = lastname;
         this.username = username;
         this.password = password;
-    }
-
-    public boolean authenticated(String inputPassword){
-        return password.equals(inputPassword);
     }
 
     public String getUsername() {
@@ -29,12 +25,11 @@ public class User {
         return lastname;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "firstname='" + firstname + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", username='" + username + '\'' +
-                '}';
+    public String getPassword() {
+        return password;
     }
+
+    public abstract boolean authenticate(String inputUsername, String inputPassword);
+
+    public abstract String displayUserInfo();
 }

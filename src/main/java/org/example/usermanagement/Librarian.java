@@ -12,4 +12,18 @@ public class Librarian extends User{
         return librarianID;
     }
 
+    @Override
+    public boolean authenticate(String inputUsername, String inputPassword) {
+        return getUsername().equals(inputUsername) && getPassword().equals(inputPassword);
+    }
+
+    @Override
+    public String displayUserInfo() {
+        return "Librarian{" +
+                "firstname='" + getFirstname() + '\'' +
+                ", lastname='" + getLastname() + '\'' +
+                ", username='" + getUsername() + '\'' +
+                ", librarian id='" + getLibrarianID() + '\'' +
+                '}';
+    }
 }
