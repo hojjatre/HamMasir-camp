@@ -2,10 +2,12 @@ package org.example.usermanagement;
 
 public class Member extends User{
 
+    private static int id = 0;
     private int memberID;
-    public Member(String firstname, String lastname, String username, String password, int memberID) {
+    public Member(String firstname, String lastname, String username, String password) {
         super(firstname, lastname, username, password);
-        this.memberID = memberID;
+        id = id + 1;
+        this.memberID = id;
     }
 
     @Override

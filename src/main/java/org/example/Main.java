@@ -17,17 +17,17 @@ public class Main {
         UserSystem userSystem = new UserSystem();
 
         Member member1 = new
-                Member("Ali", "Moradi", "AliM", "alim", 1);
+                Member("Ali", "Moradi", "AliM", "alim");
         userSystem.addUser(member1);
         Member member2 = new
-                Member("Hojjat", "Rezaei", "HojjatRE", "hojjatre", 2);
+                Member("Hojjat", "Rezaei", "HojjatRE", "hojjatre");
         userSystem.addUser(member2);
         Member member3 = new
-                Member("Reza", "Hasani", "RezaH021", "rezah021", 3);
+                Member("Reza", "Hasani", "RezaH021", "rezah021");
         userSystem.addUser(member3);
 
         Librarian librarian = new
-                Librarian("Ahmad", "Radad", "AhmadRa", "ahmadra", 1);
+                Librarian("Ahmad", "Radad", "AhmadRa", "ahmadra");
         userSystem.addUser(librarian);
 
         Author author1 = new Author("JRR", "Tolkien");
@@ -71,7 +71,7 @@ public class Main {
             System.out.println("Password: ");
             String inputPassword = scanner.nextLine();
             Member inputMember = new
-                    Member(inputFirstname, inputLastname, inputUsername, inputPassword,4);
+                    Member(inputFirstname, inputLastname, inputUsername, inputPassword);
             inSystem = true;
         }
         if(inSystem){

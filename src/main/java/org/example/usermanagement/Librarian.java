@@ -2,10 +2,12 @@ package org.example.usermanagement;
 
 public class Librarian extends User{
 
+    private static int id = 0;
     private int librarianID;
-    public Librarian(String firstname, String lastname, String username, String password, int librarianID) {
+    public Librarian(String firstname, String lastname, String username, String password) {
         super(firstname, lastname, username, password);
-        this.librarianID = librarianID;
+        id = id + 1;
+        this.librarianID = id;
     }
 
     public int getLibrarianID() {
