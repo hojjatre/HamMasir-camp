@@ -35,4 +35,11 @@ public class CatalogImpl implements Catalog{
 
         return booksByAuthor;
     }
+
+    public static void printBooks(List<Book> books){
+        for (int i = 0; i < books.size(); i++) {
+            System.out.println("Book " + i + ": " +
+                    books.get(i).getTitle() + ", " + books.get(i).getAuthor() + ", " + books.get(i).getGenre());
+        }
+    }
 }
