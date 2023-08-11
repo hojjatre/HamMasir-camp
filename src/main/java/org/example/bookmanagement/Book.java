@@ -21,8 +21,12 @@ public class Book {
         return title;
     }
 
-    public String getAuthor() {
+    public String getAuthorName() {
         return author.getName();
+    }
+
+    public Author getAuthor(){
+        return author;
     }
 
     public Genre getGenre() {

@@ -42,7 +42,7 @@ public class Main {
                 String name = scanner.nextLine();
                 Book findBook = catalog.findBook(name);
                 if(findBook != null){
-                    System.out.println(findBook.getTitle() + ", " + findBook.getAuthor() + ", " + findBook.getGenre());
+                    System.out.println(findBook.getTitle() + ", " + findBook.getAuthorName() + ", " + findBook.getGenre());
                 }
             } else if (choose.equals("2")) {
                 System.out.println("Enter Author's firstname: ");
