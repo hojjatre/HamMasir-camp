@@ -2,6 +2,8 @@ package org.example.catalogsystem;
 
 import org.example.bookmanagement.Author;
 import org.example.bookmanagement.Book;
+import org.example.usermanagement.Member;
+import org.example.usermanagement.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,7 +11,6 @@ import java.util.List;
 
 public class CatalogImpl implements Catalog{
     private List<Book> books = new ArrayList<>();
-    private List<Author> authors = new ArrayList<>();
     HashMap<Author, List<Book>> data = new HashMap<Author, List<Book>>();
 
     @Override
@@ -31,6 +32,7 @@ public class CatalogImpl implements Catalog{
             addAuthor(book.getAuthor());
             data.get(book.getAuthor()).add(book);
         }
+        books.add(book);
     }
 
     @Override
@@ -46,6 +48,19 @@ public class CatalogImpl implements Catalog{
     @Override
     public void addAuthor(Author author){
         data.put(author, new ArrayList<Book>());
+    }
+
+    @Override
+    public void allBook(User user){
+        if (user instanceof Member) {
+            System.out.println("You cannot access this option.");
+        }
+        else {
+            for (Author author:data.keySet()) {
+                System.out.println("Author: " + author.getName());
+                printBooks(data.get(author));
+            }
+        }
     }
 
     public static boolean printBooks(List<Book> books){

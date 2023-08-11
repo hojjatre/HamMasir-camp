@@ -6,6 +6,7 @@ import org.example.bookmanagement.Genre;
 import org.example.catalogsystem.CatalogImpl;
 import org.example.usermanagement.Librarian;
 import org.example.usermanagement.Member;
+import org.example.usermanagement.User;
 import org.example.usermanagement.UserSystem;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class Main {
 
         UserSystem userSystem = CreateData.createMember();
         CatalogImpl catalog = CreateData.createBook();
+        User user = null;
 
         System.out.println("You are a Member(1) or Librarian(2): ");
         Scanner scanner = new Scanner(System.in);
@@ -27,15 +29,13 @@ public class Main {
         Security security = new Security(userSystem, scanner);
 
         if (signInORsignUp.equals("1")){
-            security.signIn();
+            user = security.signIn();
         }
         else {
-            security.signUp(memberORlibrarian);
+            user = security.signUp(memberORlibrarian);
         }
-
-
         if(security.authenticated){
-            System.out.println("Search by title(1) , by Author(2): ");
+            System.out.println("Search by title(1) ,Search by Author(2), All Books(3): ");
             String choose = scanner.nextLine();
             if(choose.equals("1")){
                 System.out.println("Enter book's name: ");
@@ -51,6 +51,9 @@ public class Main {
                 String inputLastname = scanner.nextLine();
                 List<Book> findBooks = catalog.findBooksByAuthor(inputFirstname + " " + inputLastname);
                 CatalogImpl.printBooks(findBooks);
+            }
+            else if(choose.equals("3")){
+                catalog.allBook(user);
             }
         }
 

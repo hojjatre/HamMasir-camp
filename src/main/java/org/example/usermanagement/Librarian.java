@@ -1,5 +1,7 @@
 package org.example.usermanagement;
 
+import org.example.catalogsystem.CatalogImpl;
+
 public class Librarian extends User{
 
     private static int id = 0;
@@ -27,5 +29,9 @@ public class Librarian extends User{
                 ", username='" + getUsername() + '\'' +
                 ", librarian id='" + getLibrarianID() + '\'' +
                 '}';
+    }
+
+    public void ShowAllBooks(CatalogImpl catalog){
+        catalog.allBook(this);
     }
 }
