@@ -36,7 +36,7 @@ public class CreateData {
 
         CatalogImpl catalog = new CatalogImpl();
 
-        Book book1 = new Book("The Hobbit", author1, Genre.FANTASY, 10, 10);
+        Book book1 = new Book("The Hobbit", author1, Genre.FANTASY, 0, 0);
         catalog.addBook(book1);
         Book book2 = new Book("The Da Vinci Code", author2, Genre.MYSTERY, 10, 10);
         catalog.addBook(book2);

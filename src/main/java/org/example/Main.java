@@ -71,14 +71,20 @@ public class Main {
                         int inputID = Integer.parseInt(scanner.nextLine());
                         System.out.println("Return date's book: ");
                         LocalDate inputLocalDate = LocalDate.parse(scanner.nextLine());
-                        Loan loan = new Loan(inputLocalDate, (Member) user, catalog.findBookByID(inputID));
-                        loanSystem.addLoan(loan);
-                        loanSystem.printMyLoanBooks((Member) user);
+                        if(catalog.findBookByID(inputID).getAvailableCopies() > 0){
+                            Loan loan = new Loan(inputLocalDate, (Member) user, catalog.findBookByID(inputID));
+                            loanSystem.addLoan(loan);
+                            loanSystem.printMyLoanBooks((Member) user);
+                        }
+                        else {
+                            System.out.println("This books is not exist anymore, you must wait.");
+                        }
                     }else {
                         System.out.println("You must a Member.");
                     }
                 } else if (choose.equals("5")) {
                     if(user instanceof Member){
+
                         loanSystem.printMyLoanBooks((Member) user);
                     }
                 } else if (choose.equals("6")) {

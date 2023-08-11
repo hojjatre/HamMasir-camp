@@ -76,7 +76,8 @@ public class CatalogImpl implements Catalog{
     public static boolean printBooks(List<Book> books){
         for (int i = 0; i < books.size(); i++) {
             System.out.println("Book " + books.get(i).getID() + ": " +
-                    books.get(i).getTitle() + ", " + books.get(i).getAuthorName() + ", " + books.get(i).getGenre());
+                    books.get(i).getTitle() + ", " + books.get(i).getAuthorName() + ", " + books.get(i).getGenre() +
+                    ", " + books.get(i).getAvailableCopies());
         }
         return false;
     }

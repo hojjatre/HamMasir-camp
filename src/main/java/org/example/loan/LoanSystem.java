@@ -42,7 +42,12 @@ public class LoanSystem {
     }
 
     public void printMyLoanBooks(Member member){
-        CatalogImpl.printBooks(memberLOANbook.get(member));
+        if(memberLOANbook.containsKey(member)){
+            CatalogImpl.printBooks(memberLOANbook.get(member));
+        }else {
+            System.out.println("There is no books.");
+        }
+
     }
 
     public List<Loan> getLoans() {

@@ -15,6 +15,7 @@ public class Loan {
         this.member = member;
         this.book = book;
         this.penalty = 0;
+        this.book.setAvailableCopies(this.book.getAvailableCopies() - 1);
     }
 
     public Loan(int year, int month, int day, Member member, Book book){
@@ -22,6 +23,7 @@ public class Loan {
         this.member = member;
         this.book = book;
         this.penalty = 0;
+        this.book.setAvailableCopies(this.book.getAvailableCopies() - 1);
     }
 
     public LocalDate getExpirationDate() {
