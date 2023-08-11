@@ -62,12 +62,12 @@ public class LoanSystem {
                                     ", loan date: " + loan.getExpirationDate() + ", No penalty because " +
                                     ChronoUnit.DAYS.between(loan.getExpirationDate(), today)*(-1) + " left.");
                 } else if (today.compareTo(loan.getExpirationDate()) > 0) {
-                    loan.setPenalty( ( (int) ChronoUnit.DAYS.between(today, loan.getExpirationDate()) ) * 100);
+                    loan.setPenalty( ( (int) ChronoUnit.DAYS.between(today, loan.getExpirationDate()) ) * (-100));
                     System.out.println
                             ("Book " + loan.getBook().getID() + ": " + loan.getBook().getTitle() +
                                     ", loan date: " + loan.getExpirationDate() + ", penalty: " + loan.getPenalty() +
-                                    ", You must return the book in " +
-                                    ChronoUnit.DAYS.between(loan.getExpirationDate(), today) + "days ago.");
+                                    "$ , You must return the book in " +
+                                    ChronoUnit.DAYS.between(loan.getExpirationDate(), today) + " days ago.");
                 }
             }
         }
