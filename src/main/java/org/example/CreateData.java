@@ -36,13 +36,13 @@ public class CreateData {
 
         CatalogImpl catalog = new CatalogImpl();
 
-        Book book1 = new Book("The Hobbit", author1, Genre.FANTASY);
+        Book book1 = new Book("The Hobbit", author1, Genre.FANTASY, 10, 10);
         catalog.addBook(book1);
-        Book book2 = new Book("The Da Vinci Code", author2, Genre.MYSTERY);
+        Book book2 = new Book("The Da Vinci Code", author2, Genre.MYSTERY, 10, 10);
         catalog.addBook(book2);
-        Book book3 = new Book("Harry Potter and the Chamber of Secrets", author3, Genre.FANTASY);
+        Book book3 = new Book("Harry Potter and the Chamber of Secrets", author3, Genre.FANTASY, 10, 10);
         catalog.addBook(book3);
-        Book book4 = new Book("Harry Potter and the Philosopher's Stone", author3, Genre.FANTASY);
+        Book book4 = new Book("Harry Potter and the Philosopher's Stone", author3, Genre.FANTASY, 10, 10);
         catalog.addBook(book4);
 
         return catalog;

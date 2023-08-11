@@ -11,12 +11,22 @@ import java.util.List;
 
 public class CatalogImpl implements Catalog{
     private List<Book> books = new ArrayList<>();
-    HashMap<Author, List<Book>> data = new HashMap<Author, List<Book>>();
+    private HashMap<Author, List<Book>> data = new HashMap<Author, List<Book>>();
 
     @Override
-    public Book findBook(String title) {
+    public Book findBookByName(String title) {
         for (Book book : books) {
             if (book.getTitle().equalsIgnoreCase(title)) {
+                return book;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Book findBookByID(int id) {
+        for (Book book : books) {
+            if (book.getID() == id) {
                 return book;
             }
         }
@@ -65,9 +75,13 @@ public class CatalogImpl implements Catalog{
 
     public static boolean printBooks(List<Book> books){
         for (int i = 0; i < books.size(); i++) {
-            System.out.println("Book " + i + ": " +
+            System.out.println("Book " + books.get(i).getID() + ": " +
                     books.get(i).getTitle() + ", " + books.get(i).getAuthorName() + ", " + books.get(i).getGenre());
         }
         return false;
+    }
+
+    public List<Book> getBooks() {
+        return books;
     }
 }

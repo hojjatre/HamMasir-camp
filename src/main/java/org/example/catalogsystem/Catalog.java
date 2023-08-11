@@ -7,7 +7,8 @@ import org.example.usermanagement.User;
 import java.util.List;
 
 public interface Catalog {
-    Book findBook(String title);
+    Book findBookByName(String title);
+    Book findBookByID(int id);
     void addBook(Book book);
     List<Book> findBooksByAuthor(String authorName);
     void addAuthor(Author author);
