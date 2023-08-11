@@ -25,18 +25,18 @@ public class LoanSystem {
     }
 
     public int checkExpiration(LocalDate today, Loan loan) {
-        return today.compareTo(loan.getDate());
+        return today.compareTo(loan.getExpirationDate());
     }
 
-    public void updatePenalty(LocalDate expiration, Loan loan){
-        if (checkExpiration(expiration, loan) < 0) {
+    public void updatePenalty(LocalDate today, Loan loan){
+        if (checkExpiration(today, loan) < 0) {
             System.out.println
-                    ("There is no need for penalty, because " + ChronoUnit.DAYS.between(loan.getDate(), expiration) + "left.");
+                    ("There is no need for penalty, because " + ChronoUnit.DAYS.between(loan.getExpirationDate(), today) + "left.");
         }
         else {
-            loan.setPenalty( ( (int) ChronoUnit.DAYS.between(expiration, loan.getDate()) ) * 100);
+            loan.setPenalty( ( (int) ChronoUnit.DAYS.between(today, loan.getExpirationDate()) ) * 100);
             System.out.println
-                    ("You must return the book in " + (int) ChronoUnit.DAYS.between(expiration, loan.getDate()) +
+                    ("You must return the book in " + (int) ChronoUnit.DAYS.between(today, loan.getExpirationDate()) +
                             "days ago.");
         }
     }
@@ -53,21 +53,21 @@ public class LoanSystem {
         return memberLOANbook;
     }
 
-    public static void checkAllExpirationDate(List<Loan> allLoan, Member member, LocalDate expiration){
+    public static void checkAllExpirationDate(List<Loan> allLoan, Member member, LocalDate today){
         for (Loan loan: allLoan) {
             if (loan.getMember().equals(member)) {
-                if(expiration.compareTo(loan.getDate()) < 0){
+                if(today.compareTo(loan.getExpirationDate()) < 0){
                     System.out.println
                             ("Book " + loan.getBook().getID() + ": " + loan.getBook().getTitle() +
-                                    ", loan date: " + loan.getDate() + ", No penalty because " +
-                                    ChronoUnit.DAYS.between(loan.getDate(), expiration)*(-1) + " left.");
-                } else if (expiration.compareTo(loan.getDate()) > 0) {
-                    loan.setPenalty( ( (int) ChronoUnit.DAYS.between(expiration, loan.getDate()) ) * 100);
+                                    ", loan date: " + loan.getExpirationDate() + ", No penalty because " +
+                                    ChronoUnit.DAYS.between(loan.getExpirationDate(), today)*(-1) + " left.");
+                } else if (today.compareTo(loan.getExpirationDate()) > 0) {
+                    loan.setPenalty( ( (int) ChronoUnit.DAYS.between(today, loan.getExpirationDate()) ) * 100);
                     System.out.println
                             ("Book " + loan.getBook().getID() + ": " + loan.getBook().getTitle() +
-                                    ", loan date: " + loan.getDate() + ", penalty: " + loan.getPenalty() +
+                                    ", loan date: " + loan.getExpirationDate() + ", penalty: " + loan.getPenalty() +
                                     ", You must return the book in " +
-                                    ChronoUnit.DAYS.between(loan.getDate(), expiration) + "days ago.");
+                                    ChronoUnit.DAYS.between(loan.getExpirationDate(), today) + "days ago.");
                 }
             }
         }

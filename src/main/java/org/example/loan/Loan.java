@@ -6,30 +6,30 @@ import org.example.usermanagement.Member;
 import java.time.LocalDate;
 
 public class Loan {
-    private LocalDate date;
+    private LocalDate expirationDate;
     private Member member;
     private Book book;
     private int penalty;
-    public Loan(LocalDate date, Member member, Book book) {
-        this.date = date;
+    public Loan(LocalDate expirationDate, Member member, Book book) {
+        this.expirationDate = expirationDate;
         this.member = member;
         this.book = book;
         this.penalty = 0;
     }
 
     public Loan(int year, int month, int day, Member member, Book book){
-        this.date = LocalDate.parse(year + "-" + month + "-" + day);
+        this.expirationDate = LocalDate.parse(year + "-" + month + "-" + day);
         this.member = member;
         this.book = book;
         this.penalty = 0;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDate getExpirationDate() {
+        return expirationDate;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setExpirationDate(LocalDate expirationDate) {
+        this.expirationDate = expirationDate;
     }
 
     public Member getMember() {
