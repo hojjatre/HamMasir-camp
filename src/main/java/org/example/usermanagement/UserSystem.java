@@ -32,4 +32,8 @@ public class UserSystem {
         }
         return user.authenticate(username, password);
     }
+
+    public User getUser(String username){
+        return users.get(username);
+    }
 }

@@ -17,35 +17,24 @@ public class Main {
         UserSystem userSystem = CreateData.createMember();
         CatalogImpl catalog = CreateData.createBook();
 
+        System.out.println("You are a Member(1) or Librarian(2): ");
         Scanner scanner = new Scanner(System.in);
+        int memberORlibrarian = Integer.parseInt(scanner.nextLine());
+
         System.out.println("Sign in / Sing up:1/2: ");
-        Boolean inSystem = false;
-        String str = scanner.nextLine();
-        if(str.equals("1")){
-            System.out.println("Username: ");
-            String inputUsername = scanner.nextLine();
-            System.out.println("Password: ");
-            String inputPassword = scanner.nextLine();
-            if (userSystem.isUserInSystem(inputUsername, inputPassword)) {
-                System.out.println(userSystem.getUserType(inputUsername) + " is in the system.");
-                inSystem = true;
-            } else {
-                System.out.println("Invalid credentials.");
-            }
-        } else if (str.equals("2")) {
-            System.out.println("Firstname: ");
-            String inputFirstname = scanner.nextLine();
-            System.out.println("Lastname: ");
-            String inputLastname = scanner.nextLine();
-            System.out.println("Username: ");
-            String inputUsername = scanner.nextLine();
-            System.out.println("Password: ");
-            String inputPassword = scanner.nextLine();
-            Member inputMember = new
-                    Member(inputFirstname, inputLastname, inputUsername, inputPassword);
-            inSystem = true;
+        String signInORsignUp = scanner.nextLine();
+
+        Security security = new Security(userSystem, scanner);
+
+        if (signInORsignUp.equals("1")){
+            security.signIn();
         }
-        if(inSystem){
+        else {
+            security.signUp(memberORlibrarian);
+        }
+
+
+        if(security.authenticated){
             System.out.println("Search by title(1) , by Author(2): ");
             String choose = scanner.nextLine();
             if(choose.equals("1")){
