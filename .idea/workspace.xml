@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4a4577ca-fc54-41b8-90f9-941cd5507ef2" name="Changes" comment="Create BalancingThread class that extends thread">
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Utilities.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Utilities.java" afterDir="false" />
-    </list>
+    <list default="true" id="4a4577ca-fc54-41b8-90f9-941cd5507ef2" name="Changes" comment="Create Utilities class for create thread also create lists of transaction that each thread work with it" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -74,13 +72,22 @@
       <option name="project" value="LOCAL" />
       <updated>1692102932944</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Create Utilities class for create thread also create lists of transaction that each thread work with it">
+      <option name="closed" value="true" />
+      <created>1692103465383</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1692103465383</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="initial and create Transaction class" />
     <MESSAGE value="Create BalancingThread class that extends thread" />
-    <option name="LAST_COMMIT_MESSAGE" value="Create BalancingThread class that extends thread" />
+    <MESSAGE value="Create Utilities class for create thread also create lists of transaction that each thread work with it" />
+    <option name="LAST_COMMIT_MESSAGE" value="Create Utilities class for create thread also create lists of transaction that each thread work with it" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
