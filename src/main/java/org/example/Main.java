@@ -53,18 +53,20 @@ public class Main {
 
         Utilities utilities = new Utilities();
         utilities.createThread(500, transactionMap.size());
-        List<Thread> threads = utilities.splitMapByThreadNum(transactionMap, accountMap);
-        for (int i = 0; i < threads.size(); i++) {
-            threads.get(i).start();
-        }
-
-        for (int i = 0; i < threads.size(); i++) {
-            try {
-                threads.get(i).join();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        CustomThreadPool threads = utilities.splitMapByThreadNum(transactionMap, accountMap);
+        threads.run();
+        threads.shutdown();
+//        for (int i = 0; i < threads.size(); i++) {
+//            threads.get(i).start();
+//        }
+//
+//        for (int i = 0; i < threads.size(); i++) {
+//            try {
+//                threads.get(i).join();
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
 
         HashMap<Integer, Long> accountMapBalance = utilities.getBalancingThread().balance;
 

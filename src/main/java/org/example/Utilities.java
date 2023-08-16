@@ -15,7 +15,7 @@ public class Utilities {
         this.numberThread = (int) Math.ceil(sizeData/chunkSize) + 1;
     }
 
-    public List<Thread> splitMapByThreadNum(Map<Integer, Transaction> transactionMap,  HashMap<Integer, Long> balance){
+    public CustomThreadPool splitMapByThreadNum(Map<Integer, Transaction> transactionMap, HashMap<Integer, Long> balance){
         // Split Map to equal CHUNKs
         List<Map<Integer, Transaction>> chunks = transactionMap.entrySet()
                 .stream().collect(Collectors.groupingBy(entry -> (entry.getKey() - 1) / this.chunkSize))
@@ -24,11 +24,20 @@ public class Utilities {
                 .collect(Collectors.toList());
         balancingThread = new BalancingThread(chunks, balance);
         //Create our Threads
+        CustomThreadPool customThreadPool = new CustomThreadPool(numberThread);
+        System.out.println(numberThread);
         for (int i = 0; i < numberThread; i++) {
-            Thread thread = new Thread(balancingThread, String.valueOf(i));
-            threads.add(thread);
+            customThreadPool.submitTask(balancingThread);
+//            System.out.println(i);
         }
-        return threads;
+        return customThreadPool;
+
+//        customThreadPool.shutdown();
+//        for (int i = 0; i < numberThread; i++) {
+//            Thread thread = new Thread(balancingThread, String.valueOf(i));
+//            threads.add(thread);
+//        }
+//        return threads;
     }
 
     public BalancingThread getBalancingThread() {

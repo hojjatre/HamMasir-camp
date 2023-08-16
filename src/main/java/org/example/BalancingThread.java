@@ -4,10 +4,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
-public class BalancingThread extends Thread{
+public class BalancingThread implements Runnable {
     protected HashMap<Integer, Long> balance = null;
     protected List<Map<Integer, Transaction>> transaction = null;
+    private static Lock lock = new ReentrantLock();
 
     public BalancingThread(List<Map<Integer, Transaction>> chunks, HashMap<Integer, Long> balance){
         this.transaction = chunks;
@@ -20,7 +23,7 @@ public class BalancingThread extends Thread{
         calculator();
     }
 
-    public synchronized void calculator(){
+    public void calculator(){
         // Select which THREAD run this.
         Map<Integer, Transaction> temp = transaction.get(
                 Integer.parseInt(Thread.currentThread().getName()));
@@ -29,10 +32,19 @@ public class BalancingThread extends Thread{
         for (int i = Collections.min(temp.keySet()); i <= Collections.max(temp.keySet()); i++) {
             int fromAccount = temp.get(i).getFromAcccount();
             int toAccount = temp.get(i).getToAccount();
-            long balanceFromAccount = balance.get(fromAccount);
-            long balanceToAccount = balance.get(toAccount);
-            balance.put(fromAccount, balanceFromAccount - temp.get(i).getAmount());
-            balance.put(toAccount, balanceToAccount + temp.get(i).getAmount());
+//            synchronized (balance){
+                lock.lock();
+                try{
+                    long balanceFromAccount = balance.get(fromAccount);
+                    long balanceToAccount = balance.get(toAccount);
+                    balance.put(fromAccount, balanceFromAccount - temp.get(i).getAmount());
+                    balance.put(toAccount, balanceToAccount + temp.get(i).getAmount());
+                }finally {
+                    lock.unlock();
+                }
+
+//            }
+
         }
     }
 
