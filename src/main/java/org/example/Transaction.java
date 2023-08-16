@@ -15,6 +15,7 @@ class Transaction implements Runnable {
     public void run() {
         toAccount.deposit(amount);
         fromAccount.withdraw(amount);
+        System.out.println("Transferred " + amount + " from " + fromAccount.getName() + " to " + toAccount.getName());
     }
 }
 

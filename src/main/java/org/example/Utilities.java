@@ -11,12 +11,17 @@ public class Utilities {
     private List<Account> accounts;
     private List<Transaction> transactions;
 
+    public Utilities() {
+        this.accounts = new ArrayList<>();
+        this.transactions = new ArrayList<>();
+    }
+
     public List<Account> readAccounts(){
         BufferedReader accountReader;
         String row = "";
 
         try {
-            accountReader = new BufferedReader(new FileReader("C:\\Users\\hojja\\IdeaProjects\\Thread_exercise\\src\\main\\java\\org\\example\\Race Conditions - Accounts.csv"));
+            accountReader = new BufferedReader(new FileReader("C:\\Users\\hojja\\IdeaProjects\\HamMasir-camp-project\\src\\main\\java\\org\\example\\Race Conditions - Accounts.csv"));
             while (( row = accountReader.readLine()) != null){
                 String[] data = row.split(",");
                 if (data[0].equals("ID")) continue;
@@ -39,7 +44,7 @@ public class Utilities {
 
 
         try {
-            transactionReader = new BufferedReader(new FileReader("C:\\Users\\hojja\\IdeaProjects\\Thread_exercise\\src\\main\\java\\org\\example\\Race Conditions - Transaction.csv"));
+            transactionReader = new BufferedReader(new FileReader("C:\\Users\\hojja\\IdeaProjects\\HamMasir-camp-project\\src\\main\\java\\org\\example\\Race Conditions - Transaction.csv"));
             while (( row = transactionReader.readLine()) != null){
                 String[] data = row.split(",");
                 if (data[0].equals("FromAccount")) continue;
