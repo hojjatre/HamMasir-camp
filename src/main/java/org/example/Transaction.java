@@ -1,38 +1,20 @@
 package org.example;
 
-public class Transaction {
-    private int fromAcccount;
-    private int toAccount;
-    private Long amount;
+class Transaction implements Runnable {
+    private Account fromAccount;
+    private Account toAccount;
+    private long amount;
 
-    public Transaction(int fromAcccount, int toAccount, Long amount) {
-        this.fromAcccount = fromAcccount;
+    public Transaction(Account fromAccount, Account toAccount, long amount) {
+        this.fromAccount = fromAccount;
         this.toAccount = toAccount;
         this.amount = amount;
     }
 
-    public Long getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Long amount) {
-        this.amount = amount;
-    }
-
-    public int getFromAcccount() {
-        return fromAcccount;
-    }
-
-    public void setFromAcccount(int fromAcccount) {
-        this.fromAcccount = fromAcccount;
-    }
-
-    public int getToAccount() {
-        return toAccount;
-    }
-
-    public void setToAccount(int toAccount) {
-        this.toAccount = toAccount;
+    @Override
+    public void run() {
+        toAccount.deposit(amount);
+        fromAccount.withdraw(amount);
     }
 }
 
