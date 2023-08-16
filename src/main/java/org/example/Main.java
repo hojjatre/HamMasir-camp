@@ -62,7 +62,7 @@ public class Main {
 
         System.out.println("Final accounts:");
         for (Account account: accounts) {
-            System.out.println(account.getId() + ", " + account.getName() + ", " + account.getName());
+            System.out.println(account.getId() + ", " + account.getName() + ", " + account.getBalance());
         }
     }
 }
