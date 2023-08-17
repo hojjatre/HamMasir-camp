@@ -35,50 +35,37 @@ class CustomThreadPool {
     }
 
     public void shutdown() {
-        isShutdown.set(true);
+        if (!isShutdown.getAndSet(true)) {
+            for (Thread thread : threads) {
+                thread.interrupt();
+            }
+        }
+    }
+
+    public void awaitTermination() throws InterruptedException {
         for (Thread thread : threads) {
-            thread.interrupt();
+            thread.join();
         }
     }
 
     private class WorkerThread extends Thread {
         @Override
         public void run() {
-            while (true) {
+            while (!isShutdown.get() || !taskQueue.isEmpty()) {
                 Runnable task = null;
-                while (taskQueue.isEmpty() && !isShutdown.get()) {
-                    try {
-                        // Wait for tasks or shutdown signal
-                        taskQueue.wait();
-                    } catch (InterruptedException e) {
-                        System.out.println("Exception");
-                    }
-                }
-                if (isShutdown.get() && taskQueue.isEmpty()) {
-                    // Exit the thread if shutdown is requested and no tasks are left
-                    break;
-                }
-                task = taskQueue.poll();
-                if (task != null) {
-                    try {
-                        task.run();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    synchronized (CustomThreadPool.this) {
-                        completedTasks.set(completedTasks.get()+1);
-                        if (completedTasks.get() == numThreads) {
-                            // Signal that all threads have completed
-                            CustomThreadPool.this.notify();
-                        }
-                    }
+                try {
+                    task = taskQueue.take();
+                    task.run();
+                    completedTasks.incrementAndGet();
+                } catch (InterruptedException e) {
+                    // Thread interrupted, but just continue the loop
                 }
             }
         }
     }
 
     public synchronized boolean isTerminated() {
-        return taskQueue.size() == 0;
+        return taskQueue.isEmpty();
     }
 }
 

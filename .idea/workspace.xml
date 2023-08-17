@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4a4577ca-fc54-41b8-90f9-941cd5507ef2" name="Changes" comment="Change main">
+    <list default="true" id="4a4577ca-fc54-41b8-90f9-941cd5507ef2" name="Changes" comment="Change minor in main">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CustomThreadPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CustomThreadPool.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -63,7 +65,8 @@
       <workItem from="1692000089871" duration="1177000" />
       <workItem from="1692174194100" duration="4998000" />
       <workItem from="1692217975169" duration="2085000" />
-      <workItem from="1692220080471" duration="391000" />
+      <workItem from="1692220080471" duration="1696000" />
+      <workItem from="1692247246133" duration="2600000" />
     </task>
     <task id="LOCAL-00001" summary="create initial files">
       <option name="closed" value="true" />
@@ -121,7 +124,23 @@
       <option name="project" value="LOCAL" />
       <updated>1692220174208</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Change minor in main">
+      <option name="closed" value="true" />
+      <created>1692220538900</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1692220538900</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Change minor in main">
+      <option name="closed" value="true" />
+      <created>1692220720977</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1692220720977</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -135,6 +154,7 @@
     <MESSAGE value="Change Transaction class" />
     <MESSAGE value="Change Utilities class" />
     <MESSAGE value="Change main" />
-    <option name="LAST_COMMIT_MESSAGE" value="Change main" />
+    <MESSAGE value="Change minor in main" />
+    <option name="LAST_COMMIT_MESSAGE" value="Change minor in main" />
   </component>
 </project>

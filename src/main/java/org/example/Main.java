@@ -1,13 +1,6 @@
 package org.example;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
@@ -23,10 +16,14 @@ public class Main {
             threadPool.submit(transaction);
         }
         threadPool.shutdown();
+        try {
+            threadPool.awaitTermination();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
-        while (!threadPool.isTerminated());
 
-        System.out.println("Final accounts:");
+        System.out.println("\nFinal accounts:");
         for (Account account: accounts) {
             System.out.println(account.getId() + ", " + account.getName() + ", " + account.getBalance());
         }

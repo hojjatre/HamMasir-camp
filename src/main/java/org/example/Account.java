@@ -36,11 +36,10 @@ class Account {
         }
     }
 
-    public boolean withdraw(long amount) {
+    public void withdraw(long amount) {
         lock.lock();
         try {
             balance -= amount;
-            return true;
         } finally {
             lock.unlock();
         }
