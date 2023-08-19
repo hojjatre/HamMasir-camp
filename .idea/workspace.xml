@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4a4577ca-fc54-41b8-90f9-941cd5507ef2" name="Changes" comment="Change minor in main">
+    <list default="true" id="4a4577ca-fc54-41b8-90f9-941cd5507ef2" name="Changes" comment="solve an exception - change WorkerThread">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CustomThreadPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CustomThreadPool.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Account.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Account.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Transaction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Transaction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Utilities.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Utilities.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +67,9 @@
       <workItem from="1692174194100" duration="4998000" />
       <workItem from="1692217975169" duration="2085000" />
       <workItem from="1692220080471" duration="1696000" />
-      <workItem from="1692247246133" duration="2600000" />
+      <workItem from="1692247246133" duration="3541000" />
+      <workItem from="1692339818905" duration="1427000" />
+      <workItem from="1692424004994" duration="1074000" />
     </task>
     <task id="LOCAL-00001" summary="create initial files">
       <option name="closed" value="true" />
@@ -140,7 +143,15 @@
       <option name="project" value="LOCAL" />
       <updated>1692220720977</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="solve an exception - change WorkerThread">
+      <option name="closed" value="true" />
+      <created>1692250178956</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1692250178956</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -155,6 +166,7 @@
     <MESSAGE value="Change Utilities class" />
     <MESSAGE value="Change main" />
     <MESSAGE value="Change minor in main" />
-    <option name="LAST_COMMIT_MESSAGE" value="Change minor in main" />
+    <MESSAGE value="solve an exception - change WorkerThread" />
+    <option name="LAST_COMMIT_MESSAGE" value="solve an exception - change WorkerThread" />
   </component>
 </project>
