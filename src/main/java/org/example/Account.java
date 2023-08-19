@@ -29,7 +29,8 @@ class Account {
     }
 
     public void deposit(long amount) {
-        balance.set(balance.get() + amount);
+//        balance.set(balance.get() + amount);
+        balance.getAndAdd(amount);
 //        lock.lock();
 //        try {
 //            balance += amount;
@@ -39,7 +40,8 @@ class Account {
     }
 
     public void withdraw(long amount) {
-        balance.set(balance.get() - amount);
+//        balance.set(balance.get() - amount);
+        balance.getAndAdd(-amount);
 //        lock.lock();
 //        try {
 //            balance -= amount;
