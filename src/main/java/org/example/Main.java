@@ -1,12 +1,11 @@
 package org.example;
-
 import java.util.List;
 import java.util.Map;
-
+import java.util.List;
+// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
+// then press Enter. You can now see whitespace characters in your code.
 public class Main {
     public static void main(String[] args) {
-
-
         StreamUtilities streamUtilities = new StreamUtilities();
         List<String> cleanedLines = streamUtilities.removeEmptyLineAndPunctuation();
         System.out.println("Total Lines: " + streamUtilities.numberLine(cleanedLines));
@@ -33,5 +32,31 @@ public class Main {
 
         // Get words Count By Condition
         System.out.println("Words Count By Condition: " + streamUtilities.wordsCountByCondition());
+
+
+        // JAVA Thread
+        Utilities utilities = new Utilities();
+
+        List<Account> accounts = utilities.readAccounts();
+        List<Transaction> transactions = utilities.readTransaction();
+
+        // Number of thread : 5
+        CustomThreadPool threadPool = new CustomThreadPool(5);
+
+        for (Transaction transaction:transactions) {
+            threadPool.submit(transaction);
+        }
+        threadPool.shutdown();
+        try {
+            threadPool.awaitTermination();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        System.out.println("\nFinal accounts:");
+        for (Account account: accounts) {
+            System.out.println(account.getId() + ", " + account.getName() + ", " + account.getBalance());
+        }
     }
 }
