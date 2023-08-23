@@ -4,9 +4,20 @@ public class Food {
     private String name;
     private TypeFood typeFood;
 
-    public Food(String name, TypeFood typeFood) {
+    private String description;
+
+    public Food(String name, TypeFood typeFood, String description) {
         this.name = name;
         this.typeFood = typeFood;
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getName() {

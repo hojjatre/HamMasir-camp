@@ -14,13 +14,18 @@ public class AppConfig implements CommandLineRunner {
     private final List<Order> orders;
     private final List<Food> foods;
 
+    private final Map<String, Integer> codeVerification;
 
+    public Map<String, Integer> getCodeVerification() {
+        return codeVerification;
+    }
 
-    public AppConfig(List<Restaurant> restaurants, List<UserImp> userImps, List<Order> orders, List<Food> foods) {
+    public AppConfig(List<Restaurant> restaurants, List<UserImp> userImps, List<Order> orders, List<Food> foods, Map<String, Integer> codeVerification) {
         this.restaurants = restaurants;
         this.userImps = userImps;
         this.orders = orders;
         this.foods = foods;
+        this.codeVerification = codeVerification;
     }
 
     @Override
@@ -42,19 +47,21 @@ public class AppConfig implements CommandLineRunner {
         UserImp ali = new UserImp("Ali Hasani", "Ali_h", "ali@gmail.com",
                 new BCryptPasswordEncoder().encode("ali123"),
                 new HashSet<>(Collections.singleton(Role.OWNER.getRole())));
-
+        codeVerification.put(ali.getUsername(), (int) ((Math.random() * (99999 - 999)) + 999));
         userImps.add(ali);
 
 
-        Food kabob = new Food("کباب", TypeFood.IRANIAN);
+        Food kabob = new Food("کباب", TypeFood.IRANIAN, "100 گرم گوشت");
         foods.add(kabob);
-        Food pizza = new Food("پیتزا", TypeFood.PIZZA);
+        Food pizza = new Food("پیتزا سبزیجات", TypeFood.PIZZA, "ریحان + قارچ + جعفری");
         foods.add(pizza);
-        Food mahi = new Food("ماهی", TypeFood.SEA);
+        Food mahi = new Food("ماهی", TypeFood.SEA, "100 گرم ماهی");
         foods.add(mahi);
-        Food morgh_sokhari = new Food("مرغ سوخاری", TypeFood.FRIED);
+        Food mahi2 = new Food("ماهی", TypeFood.SEA, "200 گرم ماهی");
+        foods.add(mahi2);
+        Food morgh_sokhari = new Food("مرغ سوخاری", TypeFood.FRIED, "1 سینه + 1 ران + 1 بال");
         foods.add(morgh_sokhari);
-        Food ghormeh_sabzi = new Food("قورمه سبزی", TypeFood.IRANIAN);
+        Food ghormeh_sabzi = new Food("قورمه سبزی", TypeFood.IRANIAN, "100 گرم گوشت + برنج 1 نفر");
         foods.add(ghormeh_sabzi);
 
         Map<Food, Integer> cost1 = Map.ofEntries(
@@ -64,7 +71,7 @@ public class AppConfig implements CommandLineRunner {
         );
 
         Map<Food, Integer> cost2 = Map.ofEntries(
-                Map.entry(kabob, 2000),
+                Map.entry(mahi2, 5000),
                 Map.entry(morgh_sokhari, 5000),
                 Map.entry(ghormeh_sabzi, 3000)
         );
