@@ -4,11 +4,11 @@ import java.util.Map;
 
 public class Restaurant {
     private String name;
-    private User owner;
+    private UserImp owner;
     private String location;
     private Map<Food, Integer> cost;
 
-    public Restaurant(String name, User owner, String location, Map<Food, Integer> cost) {
+    public Restaurant(String name, UserImp owner, String location, Map<Food, Integer> cost) {
         this.name = name;
         this.owner = owner;
         this.location = location;
@@ -23,11 +23,11 @@ public class Restaurant {
         this.name = name;
     }
 
-    public User getOwner() {
+    public UserImp getOwner() {
         return owner;
     }
 
-    public void setOwner(User owner) {
+    public void setOwner(UserImp owner) {
         this.owner = owner;
     }
 

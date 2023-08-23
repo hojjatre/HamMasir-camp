@@ -5,11 +5,11 @@ import java.util.Map;
 public class Order {
     private static int id = -1;
     private Restaurant restaurant;
-    private Map<Food, Double> foodCost;
-    private double totalCost;
+    private Map<Food, Integer> foodCost;
+    private Integer totalCost;
     private String description;
 
-    public Order(Restaurant restaurant, Map<Food, Double> foodCost, String description) {
+    public Order(Restaurant restaurant, Map<Food, Integer> foodCost, String description) {
         this.restaurant = restaurant;
         this.foodCost = foodCost;
         this.description = description;
@@ -32,19 +32,19 @@ public class Order {
         this.restaurant = restaurant;
     }
 
-    public Map<Food, Double> getFoodCost() {
+    public Map<Food, Integer> getFoodCost() {
         return foodCost;
     }
 
-    public void setFoodCost(Map<Food, Double> foodCost) {
+    public void setFoodCost(Map<Food, Integer> foodCost) {
         this.foodCost = foodCost;
     }
 
-    public double getTotalCost() {
+    public Integer getTotalCost() {
         return totalCost;
     }
 
-    public void setTotalCost(double totalCost) {
+    public void setTotalCost(Integer totalCost) {
         this.totalCost = totalCost;
     }
 

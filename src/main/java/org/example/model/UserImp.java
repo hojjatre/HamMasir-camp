@@ -3,7 +3,7 @@ package org.example.model;
 import java.util.List;
 import java.util.Set;
 
-public class User {
+public class UserImp {
     private static int id = -1;
     private String name;
     private String username;
@@ -14,7 +14,7 @@ public class User {
 
     private List<Order> orders;
 
-    public User(String name, String username, String email, String password, Set<String> roles) {
+    public UserImp(String name, String username, String email, String password, Set<String> roles) {
         id = id + 1;
         this.name = name;
         this.username = username;
@@ -73,5 +73,9 @@ public class User {
 
     public void setOrders(List<Order> orders) {
         this.orders = orders;
+    }
+
+    public void addOrder(Order order){
+        orders.add(order);
     }
 }
