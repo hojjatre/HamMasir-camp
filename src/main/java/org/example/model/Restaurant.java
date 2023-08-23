@@ -1,18 +1,35 @@
 package org.example.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.example.view.View;
+
 import java.util.Map;
 
 public class Restaurant {
+
+    private static int id = 0;
+    @JsonView(View.publicDetail.class)
+    private int restaurantID;
+    @JsonView({View.publicDetail.class, View.detailedInfo.class})
     private String name;
+    @JsonView(View.privateDetail.class)
     private UserImp owner;
+    @JsonView({View.publicDetail.class, View.detailedInfo.class})
     private String location;
+    @JsonView(View.detailedInfo.class)
     private Map<Food, Integer> cost;
 
     public Restaurant(String name, UserImp owner, String location, Map<Food, Integer> cost) {
+        restaurantID = id;
+        id = id + 1;
         this.name = name;
         this.owner = owner;
         this.location = location;
         this.cost = cost;
+    }
+
+    public int getId() {
+        return restaurantID;
     }
 
     public String getName() {

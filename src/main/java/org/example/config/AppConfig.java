@@ -10,7 +10,7 @@ import java.util.*;
 public class AppConfig implements CommandLineRunner {
 
     private final List<Restaurant> restaurants;
-    private final List<UserImp> userImps;
+    private final Map<String ,UserImp> userImps;
     private final List<Order> orders;
     private final List<Food> foods;
 
@@ -20,7 +20,7 @@ public class AppConfig implements CommandLineRunner {
         return codeVerification;
     }
 
-    public AppConfig(List<Restaurant> restaurants, List<UserImp> userImps, List<Order> orders, List<Food> foods, Map<String, Integer> codeVerification) {
+    public AppConfig(List<Restaurant> restaurants, Map<String ,UserImp> userImps, List<Order> orders, List<Food> foods, Map<String, Integer> codeVerification) {
         this.restaurants = restaurants;
         this.userImps = userImps;
         this.orders = orders;
@@ -36,20 +36,20 @@ public class AppConfig implements CommandLineRunner {
                 new BCryptPasswordEncoder().encode("hojjat123"),
                 new HashSet<>(Collections.singleton(Role.ADMIN.getRole())));
 
-        userImps.add(hojjat);
-
+//        userImps.add(hojjat);
+        userImps.put(hojjat.getEmail(), hojjat);
         UserImp hamed = new UserImp("Hamed Rezaei", "Hamed_re", "hamed@gmail.com",
                 new BCryptPasswordEncoder().encode("hamed123"),
                 new HashSet<>(Collections.singleton(Role.USER.getRole())));
 
-        userImps.add(hamed);
-
+//        userImps.add(hamed);
+        userImps.put(hamed.getEmail(), hamed);
         UserImp ali = new UserImp("Ali Hasani", "Ali_h", "ali@gmail.com",
                 new BCryptPasswordEncoder().encode("ali123"),
                 new HashSet<>(Collections.singleton(Role.OWNER.getRole())));
-        codeVerification.put(ali.getUsername(), (int) ((Math.random() * (99999 - 999)) + 999));
-        userImps.add(ali);
-
+        codeVerification.put(ali.getEmail(), (int) ((Math.random() * (99999 - 999)) + 999));
+//        userImps.add(ali);
+        userImps.put(ali.getEmail(), ali);
 
         Food kabob = new Food("کباب", TypeFood.IRANIAN, "100 گرم گوشت");
         foods.add(kabob);
@@ -96,7 +96,7 @@ public class AppConfig implements CommandLineRunner {
         return restaurants;
     }
 
-    public List<UserImp> getUserImps() {
+    public Map<String ,UserImp> getUserImps() {
         return userImps;
     }
 

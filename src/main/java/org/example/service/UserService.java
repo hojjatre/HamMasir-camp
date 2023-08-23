@@ -10,14 +10,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
-    private List<UserImp> userImps = new ArrayList<>();
+    private Map<String ,UserImp> userImps = new HashMap<>();
 
     private Authentication authentication;
 
@@ -30,7 +28,7 @@ public class UserService implements UserDetailsService {
         this.userImps = appConfig.getUserImps();
     }
 
-    public List<UserImp> getUserImps() {
+    public Map<String ,UserImp> getUserImps() {
         return userImps;
     }
 
@@ -39,7 +37,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) {
         UserImp userImp = null;
-        for (UserImp user:userImps) {
+        for (UserImp user:userImps.values()) {
             if(user.getUsername().equals(username)){
                 userImp = user;
             }

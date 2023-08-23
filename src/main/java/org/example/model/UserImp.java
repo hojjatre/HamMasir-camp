@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.Set;
 
 public class UserImp {
-    private static int id = -1;
+    private static int id = 0;
+    private int userID;
     private String name;
     private String username;
     private String email;
@@ -15,6 +16,7 @@ public class UserImp {
     private List<Order> orders;
 
     public UserImp(String name, String username, String email, String password, Set<String> roles) {
+        userID = id;
         id = id + 1;
         this.name = name;
         this.username = username;
@@ -24,7 +26,7 @@ public class UserImp {
     }
 
     public long getId() {
-        return id;
+        return userID;
     }
 
     public String getName() {

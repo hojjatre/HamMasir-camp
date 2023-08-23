@@ -28,10 +28,11 @@ public class UserController {
 
     private final Map<String, Integer> codeVerification;
 
+    private AppConfig appConfig;
 
 
     public UserController(UserService userService, AuthenticationManager authenticationManager,
-                          ScheduleTask scheduleTask) {
+                          ScheduleTask scheduleTask, AppConfig appConfig) {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
         authentication = userService.getAuthentication();
@@ -44,11 +45,23 @@ public class UserController {
                 login.getUsername(), login.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        try {
+        if(codeVerification.get(login.getUsername()) != null) {
             return new ResponseEntity(login.getUsername() + " are login. " +
                     "and your verification code is: " + codeVerification.get(login.getUsername()) , HttpStatus.OK);
-        }catch (Exception e){
-            return new ResponseEntity(login.getUsername() + " are login." + "", HttpStatus.OK);
+        }else{
+            return new ResponseEntity(login.getUsername() + " are login." , HttpStatus.OK);
+        }
+    }
+
+    @PostMapping("/get-code-verification")
+    public ResponseEntity<Objects> getCodeVerification(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(codeVerification.get(authentication.getName()) != null){
+            return new ResponseEntity(
+                    "and your verification code is: " + codeVerification.get(authentication.getName())
+                    , HttpStatus.OK);
+        }else {
+            return new ResponseEntity("You are not a OWNER.", HttpStatus.OK);
         }
     }
 

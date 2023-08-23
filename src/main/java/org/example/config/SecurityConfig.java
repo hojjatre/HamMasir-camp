@@ -40,6 +40,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) ->
                                 authorize.requestMatchers(HttpMethod.POST, "/api/user/login").permitAll().
                                         requestMatchers(HttpMethod.GET, "/api/user/all-users").hasAuthority("ADMIN")
+                                        .requestMatchers(HttpMethod.POST, "/api/user/get-code-verification").hasAuthority("OWNER")
+                                        .requestMatchers(HttpMethod.GET, "/api/restaurant/all-restaurant").permitAll()
+                                        .requestMatchers(HttpMethod.GET, "/api/restaurant/restaurant-food").permitAll()
+                                        .requestMatchers(HttpMethod.POST, "/api/order/make-order/*").hasAuthority("OWNER")
 //                                        requestMatchers(HttpMethod.GET, "/api/user/temp").authenticated()
 //                                .requestMatchers(HttpMethod.GET,"/api/temp").hasRole("ADMIN")
                 );

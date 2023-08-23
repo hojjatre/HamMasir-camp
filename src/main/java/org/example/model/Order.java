@@ -1,27 +1,28 @@
 package org.example.model;
 
+import com.google.common.collect.ListMultimap;
+
+import java.util.List;
 import java.util.Map;
 
 public class Order {
-    private static int id = -1;
+    private static int id = 0;
+    private int orderID;
     private Restaurant restaurant;
-    private Map<Food, Integer> foodCost;
+    private Map<Food, List<Integer>> foodCost;
     private Integer totalCost;
     private String description;
 
-    public Order(Restaurant restaurant, Map<Food, Integer> foodCost, String description) {
+    public Order(Restaurant restaurant, Map<Food, List<Integer>> foodCost, String description) {
         this.restaurant = restaurant;
         this.foodCost = foodCost;
         this.description = description;
+        orderID = id;
         id = id + 1;
     }
 
-    public static int getId() {
-        return id;
-    }
-
-    public static void setId(int id) {
-        Order.id = id;
+    public int getId() {
+        return orderID;
     }
 
     public Restaurant getRestaurant() {
@@ -32,11 +33,11 @@ public class Order {
         this.restaurant = restaurant;
     }
 
-    public Map<Food, Integer> getFoodCost() {
+    public Map<Food, List<Integer>> getFoodCost() {
         return foodCost;
     }
 
-    public void setFoodCost(Map<Food, Integer> foodCost) {
+    public void setFoodCost(Map<Food, List<Integer>> foodCost) {
         this.foodCost = foodCost;
     }
 
@@ -55,4 +56,5 @@ public class Order {
     public void setDescription(String description) {
         this.description = description;
     }
+
 }
