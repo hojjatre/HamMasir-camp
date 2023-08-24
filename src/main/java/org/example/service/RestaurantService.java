@@ -9,10 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -28,6 +25,7 @@ public class RestaurantService {
     private List<Restaurant> restaurants = new ArrayList<>();
 
     private List<Food> foods;
+    private List<Restaurant> selectRestaurant;
 
     public RestaurantService(UserService userService, AuthenticationManager authenticationManager,
                              ScheduleTask scheduleTask, AppConfig appConfig) {
@@ -78,21 +76,115 @@ public class RestaurantService {
     }
 
     public ResponseEntity<Object> removeRestaurant(Authentication authentication, int id, int code){
+        UserImp userImp = userService.getUserImps().get(authentication.getName());
+
+        ResponseEntity<Object> check = checkOwner(authentication, code, id, userImp);
+        if (check != null) {
+            return check;
+        }
+
+        restaurants.remove(selectRestaurant.get(0));
+        return new ResponseEntity<>("رستوران شما با موفقیت حذف شد.", HttpStatus.OK);
+    }
+
+    public ResponseEntity<Object> changeCostFood(Authentication authentication, int restaurantID,
+                                                 int foodID ,int code, Integer inputCost){
+        UserImp userImp = userService.getUserImps().get(authentication.getName());
+
+        ResponseEntity<Object> check = checkOwner(authentication, code, restaurantID, userImp);
+        if (check != null) {
+            return check;
+        }
+
+        check = checkFoodAndChange(selectRestaurant.get(0), foodID, inputCost);
+        if (check != null){
+            return check;
+        }
+
+        return new ResponseEntity<>(selectRestaurant.get(0), HttpStatus.OK);
+
+    }
+
+    public ResponseEntity<Object> removeFood(Authentication authentication, int restaurantID,
+                                             int foodID ,int code){
+        UserImp userImp = userService.getUserImps().get(authentication.getName());
+
+        ResponseEntity<Object> check = checkOwner(authentication, code, restaurantID, userImp);
+        if (check != null) {
+            return check;
+        }
+
+        check = checkFoodAndRemove(selectRestaurant.get(0), foodID);
+        if (check != null){
+            return check;
+        }
+
+        return new ResponseEntity<>(selectRestaurant.get(0), HttpStatus.OK);
+    }
+
+    public ResponseEntity<Object> addFood(Authentication authentication, int restaurantID,
+                                             Food food ,int code, Integer inputCost){
+        UserImp userImp = userService.getUserImps().get(authentication.getName());
+
+        ResponseEntity<Object> check = checkOwner(authentication, code, restaurantID, userImp);
+        if (check != null) {
+            return check;
+        }
+        Map<Food, Integer> cost = new HashMap<>(selectRestaurant.get(0).getCost());
+        cost.put(food, inputCost);
+        foods.add(food);
+        selectRestaurant.get(0).setCost(cost);
+
+        return new ResponseEntity<>(selectRestaurant.get(0), HttpStatus.OK);
+    }
+
+
+    public ResponseEntity<Object> checkOwner(Authentication authentication, int code, int id,
+                                             UserImp userImp){
         if (codeVerification.get(authentication.getName()) != code) {
             return new ResponseEntity<>("کد تایید شما درست نیست.", HttpStatus.FORBIDDEN);
         }
-
-        UserImp userImp = userService.getUserImps().get(authentication.getName());
-
-        List<Restaurant> selectRestaurant = restaurants.stream().filter(
+        selectRestaurant = restaurants.stream().filter(
                 restaurant -> restaurant.getId() == id && restaurant.getOwner() == userImp
         ).collect(Collectors.toList());
 
         if(selectRestaurant.isEmpty()){
             return new ResponseEntity<>("شما مالک رستوران نیستید.", HttpStatus.NOT_FOUND);
         }
-        restaurants.remove(selectRestaurant.get(0));
-        return new ResponseEntity<>("رستوران شما با موفقیت حذف شد.", HttpStatus.OK);
+
+        return null;
+    }
+
+    public ResponseEntity<Object> checkFoodAndChange(Restaurant restaurant, int foodID, Integer inputCost){
+        boolean changed = false;
+        Map<Food, Integer> cost = new HashMap<>(restaurant.getCost());
+        for (Food food:restaurant.getCost().keySet()) {
+            if (food.getId() == foodID) {
+                cost.put(food, inputCost);
+                changed = true;
+            }
+        }
+        if (!changed){
+            return new ResponseEntity<>("غذای مورد نظر یافت نشد.", HttpStatus.NOT_FOUND);
+        }
+        restaurant.setCost(cost);
+        return null;
+    }
+
+    public ResponseEntity<Object> checkFoodAndRemove(Restaurant restaurant, int foodID){
+        boolean changed = false;
+        Map<Food, Integer> cost = new HashMap<>(restaurant.getCost());
+        for (Food food:restaurant.getCost().keySet()) {
+            if (food.getId() == foodID) {
+                cost.remove(food);
+                changed = true;
+            }
+        }
+        if (!changed){
+            return new ResponseEntity<>("غذای مورد نظر یافت نشد.", HttpStatus.NOT_FOUND);
+        }
+        restaurant.setCost(cost);
+        return null;
     }
 
 

@@ -1,6 +1,7 @@
 package org.example.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import org.example.model.Food;
 import org.example.model.Restaurant;
 import org.example.model.RestaurantDTO;
 import org.example.service.RestaurantService;
@@ -25,7 +26,7 @@ public class RestaurantController {
 
 
     @GetMapping("/all-restaurant")
-    @JsonView(View.publicDetail.class)
+//    @JsonView(View.publicDetail.class)
     public ResponseEntity<List<Restaurant>> allRestaurant(){
         return new ResponseEntity<>(restaurantService.getRestaurants(), HttpStatus.OK);
     }
@@ -36,18 +37,44 @@ public class RestaurantController {
         return new ResponseEntity<>(restaurantService.getRestaurants(), HttpStatus.OK);
     }
 
-    @PostMapping("/add-restaurant/{codeVerification}")
-    public ResponseEntity<Object> addRestaurant(@PathVariable("codeVerification") int code,
+    @PostMapping("/add-restaurant")
+    public ResponseEntity<Object> addRestaurant(@RequestParam int code,
                                                 @RequestBody RestaurantDTO restaurantDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return restaurantService.addRestaurant(authentication, code, restaurantDTO);
     }
 
-    @PostMapping("/remove-restaurant/{id}/{codeVerification}")
+    @PostMapping("/remove-restaurant/{id}")
     public ResponseEntity<Object> removeRestaurant(@PathVariable("id") int id,
-                                                   @PathVariable("codeVerification") int code){
+                                                   @RequestParam int code){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return restaurantService.removeRestaurant(authentication, id, code);
+    }
+
+    @PostMapping("/change-cost-food/{foodID}/{restaurantID}")
+    public ResponseEntity<Object> changeCostFood(@PathVariable("foodID") int foodID,
+                                             @PathVariable("restaurantID") int restaurantID,
+                                             @RequestParam int code,
+                                             @RequestParam Integer inputCost){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return restaurantService.changeCostFood(authentication, restaurantID, foodID, code, inputCost);
+    }
+
+    @PostMapping("/remove-food/{foodID}/{restaurantID}")
+    public ResponseEntity<Object> removeFood(@PathVariable("foodID") int foodID,
+                                             @PathVariable("restaurantID") int restaurantID,
+                                             @RequestParam int code){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return restaurantService.removeFood(authentication, restaurantID, foodID, code);
+    }
+
+    @PostMapping("/add-food/{restaurantID}")
+    public ResponseEntity<Object> addFood(@PathVariable("restaurantID") int restaurantID,
+                                          @RequestParam int code,
+                                          @RequestBody Food food,
+                                          @RequestParam Integer inputCost){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return restaurantService.addFood(authentication, restaurantID, food, code, inputCost);
     }
 
 }

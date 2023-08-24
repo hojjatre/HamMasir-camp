@@ -64,4 +64,10 @@ public class Restaurant {
         this.cost = cost;
     }
 
+//    public void changeFoodCost(Food food, Integer inputCost){
+//        Map<Food, Integer> temp = this.cost;
+//        temp.put(food, inputCost);
+//        this.cost = temp;
+//    }
+
 }
