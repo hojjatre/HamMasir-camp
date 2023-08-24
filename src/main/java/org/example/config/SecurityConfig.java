@@ -45,6 +45,7 @@ public class SecurityConfig {
                                         .requestMatchers(HttpMethod.GET, "/api/restaurant/restaurant-food").permitAll()
                                         .requestMatchers(HttpMethod.POST, "/api/order/make-order/*").hasAuthority("OWNER")
                                         .requestMatchers(HttpMethod.POST, "/api/restaurant/add-restaurant/*").hasAuthority("OWNER")
+                                        .requestMatchers(HttpMethod.POST, "/api/restaurant/remove-restaurant/**").hasAuthority("OWNER")
 //                                        requestMatchers(HttpMethod.GET, "/api/user/temp").authenticated()
 //                                .requestMatchers(HttpMethod.GET,"/api/temp").hasRole("ADMIN")
                 );

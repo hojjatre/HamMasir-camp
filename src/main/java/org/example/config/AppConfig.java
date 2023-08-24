@@ -51,6 +51,12 @@ public class AppConfig implements CommandLineRunner {
 //        userImps.add(ali);
         userImps.put(ali.getEmail(), ali);
 
+        UserImp javad = new UserImp("javad Mohammadi", "javad", "javad@gmail.com",
+                new BCryptPasswordEncoder().encode("javad123"),
+                new HashSet<>(Collections.singleton(Role.OWNER.getRole())));
+        codeVerification.put(javad.getEmail(), (int) ((Math.random() * (99999 - 999)) + 999));
+        userImps.put(javad.getEmail(), javad);
+
         Food kabob = new Food("کباب", TypeFood.IRANIAN, "100 گرم گوشت");
         foods.add(kabob);
         Food pizza = new Food("پیتزا سبزیجات", TypeFood.PIZZA, "ریحان + قارچ + جعفری");
