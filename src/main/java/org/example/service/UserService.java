@@ -1,6 +1,7 @@
 package org.example.service;
 
 import org.example.config.AppConfig;
+import org.example.model.Food;
 import org.example.model.UserImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 @Service
 public class UserService implements UserDetailsService {
     private Map<String ,UserImp> userImps = new HashMap<>();
+    private List<Food> foods;
 
     private Authentication authentication;
 
@@ -26,6 +28,7 @@ public class UserService implements UserDetailsService {
     @Autowired
     public UserService(AppConfig appConfig) {
         this.userImps = appConfig.getUserImps();
+        this.foods = appConfig.getFoods();
     }
 
     public Map<String ,UserImp> getUserImps() {
