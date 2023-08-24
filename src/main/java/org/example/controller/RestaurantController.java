@@ -37,11 +37,17 @@ public class RestaurantController {
     }
 
     @PostMapping("/add-restaurant/{codeVerification}")
-//    @JsonView({View.publicDetail.class, View.privateDetail.class})
     public ResponseEntity<Object> addRestaurant(@PathVariable("codeVerification") int code,
                                                 @RequestBody RestaurantDTO restaurantDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return restaurantService.addRestaurant(authentication, code, restaurantDTO);
+    }
+
+    @PostMapping("/remove-restaurant/{id}/{codeVerification}")
+    public ResponseEntity<Object> removeRestaurant(@PathVariable("id") int id,
+                                                   @PathVariable("codeVerification") int code){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return restaurantService.removeRestaurant(authentication, id, code);
     }
 
 }

@@ -51,6 +51,12 @@ public class AppConfig implements CommandLineRunner {
 //        userImps.add(ali);
         userImps.put(ali.getEmail(), ali);
 
+        UserImp javad = new UserImp("javad Mohammadi", "javad", "javad@gmail.com",
+                new BCryptPasswordEncoder().encode("javad123"),
+                new HashSet<>(Collections.singleton(Role.OWNER.getRole())));
+        codeVerification.put(javad.getEmail(), (int) ((Math.random() * (99999 - 999)) + 999));
+        userImps.put(javad.getEmail(), javad);
+
         Food kabob = new Food("کباب", TypeFood.IRANIAN, "100 گرم گوشت");
         foods.add(kabob);
         Food pizza = new Food("پیتزا سبزیجات", TypeFood.PIZZA, "ریحان + قارچ + جعفری");
@@ -76,11 +82,11 @@ public class AppConfig implements CommandLineRunner {
                 Map.entry(ghormeh_sabzi, 3000)
         );
 
-        Restaurant restaurant1 = new Restaurant("دربار", hamed, "خیابان پیروزی - پیروزی 5",
+        Restaurant restaurant1 = new Restaurant("دربار", ali, "خیابان پیروزی - پیروزی 5",
                 cost1);
         restaurants.add(restaurant1);
 
-        Restaurant restaurant2 = new Restaurant("پدیده", hamed, "خیابان پیروزی - پیروزی 40",
+        Restaurant restaurant2 = new Restaurant("پدیده", ali, "خیابان پیروزی - پیروزی 40",
                 cost2);
         restaurants.add(restaurant2);
 

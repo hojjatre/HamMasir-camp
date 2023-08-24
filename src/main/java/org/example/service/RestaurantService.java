@@ -49,11 +49,11 @@ public class RestaurantService {
 
     public ResponseEntity<Object> addRestaurant(Authentication authentication, int code, RestaurantDTO restaurantDTO){
         if (codeVerification.get(authentication.getName()) != code) {
-            return new ResponseEntity("Your verification code is not correct.", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Your verification code is not correct.", HttpStatus.FORBIDDEN);
         }
         if (restaurantDTO.getNameFood().length != restaurantDTO.getNameFood().length ||
                 restaurantDTO.getNameFood().length != restaurantDTO.getCost().length){
-            return new ResponseEntity("شما باید تمام موارد غذا را پر کنید، دوباره تلاش کنید.", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("شما باید تمام موارد غذا را پر کنید، دوباره تلاش کنید.", HttpStatus.FORBIDDEN);
         }
         // new Food
         List<Food> foodList = IntStream.range(0, restaurantDTO.getNameFood().length)
@@ -74,7 +74,25 @@ public class RestaurantService {
         foods.stream().forEach(food -> System.out.println(food.getName() + ", " + food.getTypeFood()));
 
         restaurants.add(restaurant);
-        return new ResponseEntity(restaurant, HttpStatus.OK);
+        return new ResponseEntity<>(restaurant, HttpStatus.OK);
+    }
+
+    public ResponseEntity<Object> removeRestaurant(Authentication authentication, int id, int code){
+        if (codeVerification.get(authentication.getName()) != code) {
+            return new ResponseEntity<>("کد تایید شما درست نیست.", HttpStatus.FORBIDDEN);
+        }
+
+        UserImp userImp = userService.getUserImps().get(authentication.getName());
+
+        List<Restaurant> selectRestaurant = restaurants.stream().filter(
+                restaurant -> restaurant.getId() == id && restaurant.getOwner() == userImp
+        ).collect(Collectors.toList());
+
+        if(selectRestaurant.isEmpty()){
+            return new ResponseEntity<>("شما مالک رستوران نیستید.", HttpStatus.NOT_FOUND);
+        }
+        restaurants.remove(selectRestaurant.get(0));
+        return new ResponseEntity<>("رستوران شما با موفقیت حذف شد.", HttpStatus.OK);
     }
 
 
