@@ -1,23 +1,18 @@
 package org.example.model;
 
-import java.util.List;
 import java.util.Set;
 
-public class UserImp {
-    private static int id = 0;
+public class RegistrationDTO {
     private int userID;
     private String name;
     private String username;
     private String email;
     private String password;
 
-    private Set<String> roles;
+    private String roles;
 
-    private List<Order> orders;
-
-    public UserImp(String name, String username, String email, String password, Set<String> roles) {
-        userID = id;
-        id = id + 1;
+    public RegistrationDTO(int userID, String name, String username, String email, String password, String roles) {
+        this.userID = userID;
         this.name = name;
         this.username = username;
         this.email = email;
@@ -25,10 +20,12 @@ public class UserImp {
         this.roles = roles;
     }
 
-    public UserImp(){}
-
-    public long getId() {
+    public int getUserID() {
         return userID;
+    }
+
+    public void setUserID(int userID) {
+        this.userID = userID;
     }
 
     public String getName() {
@@ -63,23 +60,11 @@ public class UserImp {
         this.password = password;
     }
 
-    public Set<String> getRoles() {
+    public String getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<String> roles) {
+    public void setRoles(String roles) {
         this.roles = roles;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
-    }
-
-    public void addOrder(Order order){
-        orders.add(order);
     }
 }

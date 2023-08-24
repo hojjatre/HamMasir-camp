@@ -8,13 +8,13 @@ public enum Role {
     public String getRole(){
         switch (this){
             case ADMIN -> {
-                return "ADMIN";
+                return "ROLE_ADMIN";
             }
             case OWNER -> {
-                return "OWNER";
+                return "ROLE_OWNER";
             }
             case USER -> {
-                return "USER";
+                return "ROLE_USER";
             }
             default -> {
                 return null;

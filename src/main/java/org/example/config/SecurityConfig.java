@@ -38,17 +38,18 @@ public class SecurityConfig {
 
         http.csrf().disable()
                 .authorizeHttpRequests((authorize) ->
-                                authorize.requestMatchers(HttpMethod.POST, "/api/user/login").permitAll().
-                                        requestMatchers(HttpMethod.GET, "/api/user/all-users").hasAuthority("ADMIN")
-                                        .requestMatchers(HttpMethod.POST, "/api/user/get-code-verification").hasAuthority("OWNER")
+                                authorize.requestMatchers(HttpMethod.POST, "/api/user/login").permitAll()
+                                        .requestMatchers(HttpMethod.POST, "/api/user/registration").permitAll()
+                                        .requestMatchers(HttpMethod.GET, "/api/user/all-users").hasRole("ADMIN")
+                                        .requestMatchers(HttpMethod.POST, "/api/user/get-code-verification").hasRole("OWNER")
                                         .requestMatchers(HttpMethod.GET, "/api/restaurant/all-restaurant").permitAll()
                                         .requestMatchers(HttpMethod.GET, "/api/restaurant/restaurant-food").permitAll()
-                                        .requestMatchers(HttpMethod.POST, "/api/order/make-order/*").hasAuthority("USER")
-                                        .requestMatchers(HttpMethod.POST, "/api/restaurant/add-restaurant").hasAuthority("OWNER")
-                                        .requestMatchers(HttpMethod.POST, "/api/restaurant/remove-restaurant/*").hasAuthority("OWNER")
-                                        .requestMatchers(HttpMethod.POST, "/api/restaurant/change-cost-food/**").hasAuthority("OWNER")
-                                        .requestMatchers(HttpMethod.POST, "/api/restaurant/remove-food/**").hasAuthority("OWNER")
-                                        .requestMatchers(HttpMethod.POST, "/api/restaurant/add-food/**").hasAuthority("OWNER")
+                                        .requestMatchers(HttpMethod.POST, "/api/order/make-order/*").hasRole("USER")
+                                        .requestMatchers(HttpMethod.POST, "/api/restaurant/add-restaurant").hasRole("OWNER")
+                                        .requestMatchers(HttpMethod.POST, "/api/restaurant/remove-restaurant/*").hasRole("OWNER")
+                                        .requestMatchers(HttpMethod.POST, "/api/restaurant/change-cost-food/**").hasRole("OWNER")
+                                        .requestMatchers(HttpMethod.POST, "/api/restaurant/remove-food/**").hasRole("OWNER")
+                                        .requestMatchers(HttpMethod.POST, "/api/restaurant/add-food/**").hasRole("OWNER")
 //                                        requestMatchers(HttpMethod.GET, "/api/user/temp").authenticated()
 //                                .requestMatchers(HttpMethod.GET,"/api/temp").hasRole("ADMIN")
                 );

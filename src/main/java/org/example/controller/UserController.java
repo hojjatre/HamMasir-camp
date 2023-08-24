@@ -3,6 +3,8 @@ package org.example.controller;
 
 import org.example.config.AppConfig;
 import org.example.model.LoginDTO;
+import org.example.model.RegistrationDTO;
+import org.example.model.Role;
 import org.example.model.UserImp;
 import org.example.schedule.ScheduleTask;
 import org.example.service.UserService;
@@ -12,11 +14,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/user")
@@ -28,7 +29,6 @@ public class UserController {
 
     private final Map<String, Integer> codeVerification;
 
-    private AppConfig appConfig;
 
 
     public UserController(UserService userService, AuthenticationManager authenticationManager,
@@ -68,6 +68,20 @@ public class UserController {
     @GetMapping("/all-users")
     public ResponseEntity<List<UserImp>> allUser(){
         return new ResponseEntity(userService.getUserImps(), HttpStatus.OK);
+    }
+
+    @PostMapping("/registration")
+    public ResponseEntity<Object> registration(@RequestBody RegistrationDTO registrationDTO){
+        UserImp user = new UserImp(
+                registrationDTO.getName(),
+                registrationDTO.getUsername(),
+                registrationDTO.getEmail(),
+                new BCryptPasswordEncoder().encode(registrationDTO.getPassword()),
+                new HashSet<>(Collections.singleton(registrationDTO.getRoles())));
+
+        userService.getUserImps().put(user.getEmail(), user);
+        codeVerification.put(user.getEmail(), (int) ((Math.random() * (99999 - 999)) + 999));
+        return new ResponseEntity<>("شما وارد شدید.", HttpStatus.OK);
     }
 
 
