@@ -3,7 +3,6 @@ package org.example.model;
 import java.util.Set;
 
 public class RegistrationDTO {
-    private int userID;
     private String name;
     private String username;
     private String email;
@@ -11,21 +10,12 @@ public class RegistrationDTO {
 
     private String roles;
 
-    public RegistrationDTO(int userID, String name, String username, String email, String password, String roles) {
-        this.userID = userID;
+    public RegistrationDTO(String name, String username, String email, String password, String roles) {
         this.name = name;
         this.username = username;
         this.email = email;
         this.password = password;
         this.roles = roles;
-    }
-
-    public int getUserID() {
-        return userID;
-    }
-
-    public void setUserID(int userID) {
-        this.userID = userID;
     }
 
     public String getName() {
