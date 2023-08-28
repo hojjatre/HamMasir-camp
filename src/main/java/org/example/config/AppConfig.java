@@ -10,7 +10,8 @@ import java.util.*;
 public class AppConfig implements CommandLineRunner {
 
     private final List<Restaurant> restaurants;
-    private final Map<String ,UserImp> userImps;
+    Map<String , UserImp> users = new HashMap<>(); // username, user
+    Map<String , Role> roles = new HashMap<>(); // role name, role
     private final List<Order> orders;
     private final List<Food> foods;
 
@@ -20,42 +21,36 @@ public class AppConfig implements CommandLineRunner {
         return codeVerification;
     }
 
-    public AppConfig(List<Restaurant> restaurants, Map<String ,UserImp> userImps, List<Order> orders, List<Food> foods, Map<String, Integer> codeVerification) {
+    public AppConfig(List<Restaurant> restaurants, List<Order> orders, List<Food> foods, Map<String, Integer> codeVerification) {
         this.restaurants = restaurants;
-        this.userImps = userImps;
         this.orders = orders;
         this.foods = foods;
         this.codeVerification = codeVerification;
     }
 
+    public Map<String, UserImp> getUsers() {
+        return users;
+    }
+
+    public Map<String, Role> getRoles() {
+        return roles;
+    }
+
     @Override
     public void run(String... args) throws Exception {
 
+        Role role_user = new Role(ERole.ROLE_USER);
+        roles.put(ERole.ROLE_USER.name(), role_user);
+        Role role_admin = new Role(ERole.ROLE_ADMIN);
+        roles.put(ERole.ROLE_ADMIN.name(), role_admin);
+        Role role_owner = new Role(ERole.ROLE_OWNER);
+        roles.put(ERole.ROLE_OWNER.name(), role_owner);
+        UserImp hojjat = new UserImp("HojjatRE", "hojjat@gmailcom",
+                new BCryptPasswordEncoder().encode("hojjat123"));
+        hojjat.setRoles(Collections.singleton(role_owner));
+        codeVerification.put(hojjat.getUsername(), (int) ((Math.random() * (99999 - 999)) + 999));
+        users.put(hojjat.getUsername(), hojjat);
 
-        UserImp hojjat = new UserImp("Hojjat Rezaei", "HojjatRE", "hojjat@gmail.com",
-                new BCryptPasswordEncoder().encode("hojjat123"),
-                new HashSet<>(Collections.singleton(Role.ADMIN.getRole())));
-
-//        userImps.add(hojjat);
-        userImps.put(hojjat.getEmail(), hojjat);
-        UserImp hamed = new UserImp("Hamed Rezaei", "Hamed_re", "hamed@gmail.com",
-                new BCryptPasswordEncoder().encode("hamed123"),
-                new HashSet<>(Collections.singleton(Role.USER.getRole())));
-
-//        userImps.add(hamed);
-        userImps.put(hamed.getEmail(), hamed);
-        UserImp ali = new UserImp("Ali Hasani", "Ali_h", "ali@gmail.com",
-                new BCryptPasswordEncoder().encode("ali123"),
-                new HashSet<>(Collections.singleton(Role.OWNER.getRole())));
-        codeVerification.put(ali.getEmail(), (int) ((Math.random() * (99999 - 999)) + 999));
-//        userImps.add(ali);
-        userImps.put(ali.getEmail(), ali);
-
-        UserImp javad = new UserImp("javad Mohammadi", "javad", "javad@gmail.com",
-                new BCryptPasswordEncoder().encode("javad123"),
-                new HashSet<>(Collections.singleton(Role.OWNER.getRole())));
-        codeVerification.put(javad.getEmail(), (int) ((Math.random() * (99999 - 999)) + 999));
-        userImps.put(javad.getEmail(), javad);
 
         Food kabob = new Food("کباب", TypeFood.IRANIAN, "100 گرم گوشت");
         foods.add(kabob);
@@ -82,11 +77,11 @@ public class AppConfig implements CommandLineRunner {
                 Map.entry(ghormeh_sabzi, 3000)
         );
 
-        Restaurant restaurant1 = new Restaurant("دربار", ali, "خیابان پیروزی - پیروزی 5",
+        Restaurant restaurant1 = new Restaurant("دربار", hojjat, "خیابان پیروزی - پیروزی 5",
                 cost1);
         restaurants.add(restaurant1);
 
-        Restaurant restaurant2 = new Restaurant("پدیده", ali, "خیابان پیروزی - پیروزی 40",
+        Restaurant restaurant2 = new Restaurant("پدیده", hojjat, "خیابان پیروزی - پیروزی 40",
                 cost2);
         restaurants.add(restaurant2);
 
@@ -102,9 +97,6 @@ public class AppConfig implements CommandLineRunner {
         return restaurants;
     }
 
-    public Map<String ,UserImp> getUserImps() {
-        return userImps;
-    }
 
     public List<Order> getOrders() {
         return orders;

@@ -4,39 +4,29 @@ import java.util.List;
 import java.util.Set;
 
 public class UserImp {
-    private static int id = 0;
-    private int userID;
-    private String name;
+    private static Long id = 0L;
+    private Long userID;
     private String username;
     private String email;
     private String password;
 
-    private Set<String> roles;
+    private Set<Role> roles;
 
     private List<Order> orders;
 
-    public UserImp(String name, String username, String email, String password, Set<String> roles) {
+
+    public UserImp(String username, String email, String password) {
         userID = id;
         id = id + 1;
-        this.name = name;
         this.username = username;
         this.email = email;
         this.password = password;
-        this.roles = roles;
     }
 
     public UserImp(){}
 
-    public long getId() {
+    public Long getId() {
         return userID;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getUsername() {
@@ -63,11 +53,11 @@ public class UserImp {
         this.password = password;
     }
 
-    public Set<String> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<String> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 

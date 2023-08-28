@@ -1,11 +1,11 @@
 package org.example.service;
 
 import org.example.config.AppConfig;
+import org.example.dto.RestaurantDTO;
 import org.example.model.*;
 import org.example.schedule.ScheduleTask;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +15,10 @@ import java.util.stream.IntStream;
 
 @Service
 public class RestaurantService {
-    private final AuthenticationManager authenticationManager;
-    private final UserService userService;
 
-    Authentication authentication;
+    private final UserDetailsServiceImpl userDetailsService;
+
+    private Authentication authentication;
 
     private final Map<String, Integer> codeVerification;
 
@@ -27,11 +27,9 @@ public class RestaurantService {
     private List<Food> foods;
     private List<Restaurant> selectRestaurant;
 
-    public RestaurantService(UserService userService, AuthenticationManager authenticationManager,
+    public RestaurantService(UserDetailsServiceImpl userDetailsService,
                              ScheduleTask scheduleTask, AppConfig appConfig) {
-        this.userService = userService;
-        this.authenticationManager = authenticationManager;
-        authentication = userService.getAuthentication();
+        this.userDetailsService = userDetailsService;
         codeVerification = scheduleTask.getCodeVerification();
         restaurants = appConfig.getRestaurants();
         foods = appConfig.getFoods();
@@ -42,7 +40,7 @@ public class RestaurantService {
     }
 
     public Map<String ,UserImp> UserService() {
-        return userService.getUserImps();
+        return userDetailsService.getUsers();
     }
 
     public ResponseEntity<Object> addRestaurant(Authentication authentication, int code, RestaurantDTO restaurantDTO){
@@ -65,7 +63,7 @@ public class RestaurantService {
                 .boxed()
                 .collect(Collectors.toMap(foodList::get, i -> restaurantDTO.getCost()[i]));
 
-        UserImp userImp = userService.getUserImps().get(authentication.getName());
+        UserImp userImp = userDetailsService.getUsers().get(authentication.getName());
 
         Restaurant restaurant = new Restaurant(restaurantDTO.getName(),
                 userImp, restaurantDTO.getLocation(), costs);
@@ -76,7 +74,7 @@ public class RestaurantService {
     }
 
     public ResponseEntity<Object> removeRestaurant(Authentication authentication, int id, int code){
-        UserImp userImp = userService.getUserImps().get(authentication.getName());
+        UserImp userImp = userDetailsService.getUsers().get(authentication.getName());
 
         ResponseEntity<Object> check = checkOwner(authentication, code, id, userImp);
         if (check != null) {
@@ -89,7 +87,7 @@ public class RestaurantService {
 
     public ResponseEntity<Object> changeCostFood(Authentication authentication, int restaurantID,
                                                  int foodID ,int code, Integer inputCost){
-        UserImp userImp = userService.getUserImps().get(authentication.getName());
+        UserImp userImp = userDetailsService.getUsers().get(authentication.getName());
 
         ResponseEntity<Object> check = checkOwner(authentication, code, restaurantID, userImp);
         if (check != null) {
@@ -107,7 +105,7 @@ public class RestaurantService {
 
     public ResponseEntity<Object> removeFood(Authentication authentication, int restaurantID,
                                              int foodID ,int code){
-        UserImp userImp = userService.getUserImps().get(authentication.getName());
+        UserImp userImp = userDetailsService.getUsers().get(authentication.getName());
 
         ResponseEntity<Object> check = checkOwner(authentication, code, restaurantID, userImp);
         if (check != null) {
@@ -124,7 +122,7 @@ public class RestaurantService {
 
     public ResponseEntity<Object> addFood(Authentication authentication, int restaurantID,
                                              Food food ,int code, Integer inputCost){
-        UserImp userImp = userService.getUserImps().get(authentication.getName());
+        UserImp userImp = userDetailsService.getUsers().get(authentication.getName());
 
         ResponseEntity<Object> check = checkOwner(authentication, code, restaurantID, userImp);
         if (check != null) {
