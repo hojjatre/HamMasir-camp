@@ -3,11 +3,12 @@ package org.example.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.example.model.Food;
 import org.example.model.Restaurant;
-import org.example.model.RestaurantDTO;
+import org.example.dto.RestaurantDTO;
 import org.example.service.RestaurantService;
 import org.example.view.View;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -38,13 +39,16 @@ public class RestaurantController {
     }
 
     @PostMapping("/add-restaurant")
+    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Object> addRestaurant(@RequestParam int code,
                                                 @RequestBody RestaurantDTO restaurantDTO){
+        System.out.println("------------");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return restaurantService.addRestaurant(authentication, code, restaurantDTO);
     }
 
     @PostMapping("/remove-restaurant/{id}")
+    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Object> removeRestaurant(@PathVariable("id") int id,
                                                    @RequestParam int code){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -52,6 +56,7 @@ public class RestaurantController {
     }
 
     @PostMapping("/change-cost-food/{foodID}/{restaurantID}")
+    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Object> changeCostFood(@PathVariable("foodID") int foodID,
                                              @PathVariable("restaurantID") int restaurantID,
                                              @RequestParam int code,
@@ -61,6 +66,7 @@ public class RestaurantController {
     }
 
     @PostMapping("/remove-food/{foodID}/{restaurantID}")
+    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Object> removeFood(@PathVariable("foodID") int foodID,
                                              @PathVariable("restaurantID") int restaurantID,
                                              @RequestParam int code){
@@ -69,6 +75,7 @@ public class RestaurantController {
     }
 
     @PostMapping("/add-food/{restaurantID}")
+    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Object> addFood(@PathVariable("restaurantID") int restaurantID,
                                           @RequestParam int code,
                                           @RequestBody Food food,

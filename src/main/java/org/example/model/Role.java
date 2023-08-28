@@ -1,24 +1,18 @@
 package org.example.model;
 
-public enum Role {
-    ADMIN,
-    OWNER,
-    USER;
+public class Role {
+    private int id;
+    private ERole name;
 
-    public String getRole(){
-        switch (this){
-            case ADMIN -> {
-                return "ROLE_ADMIN";
-            }
-            case OWNER -> {
-                return "ROLE_OWNER";
-            }
-            case USER -> {
-                return "ROLE_USER";
-            }
-            default -> {
-                return null;
-            }
-        }
+    public Role() {
+
+    }
+
+    public Role(ERole name) {
+        this.name = name;
+    }
+
+    public ERole getName() {
+        return name;
     }
 }

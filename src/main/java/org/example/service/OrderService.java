@@ -18,8 +18,8 @@ import java.util.*;
 
 @Service
 public class OrderService {
-    private final AuthenticationManager authenticationManager;
-    private final UserService userService;
+    private AuthenticationManager authenticationManager;
+    private final UserDetailsServiceImpl userDetailsService;
 
     Authentication authentication;
 
@@ -29,11 +29,9 @@ public class OrderService {
 
     private List<Food> foods;
 
-    public OrderService(UserService userService, AuthenticationManager authenticationManager,
+    public OrderService(UserDetailsServiceImpl userDetailsService,
                            ScheduleTask scheduleTask, AppConfig appConfig) {
-        this.userService = userService;
-        this.authenticationManager = authenticationManager;
-        authentication = userService.getAuthentication();
+        this.userDetailsService = userDetailsService;
         codeVerification = scheduleTask.getCodeVerification();
         restaurants = appConfig.getRestaurants();
         foods = appConfig.getFoods();
@@ -41,7 +39,7 @@ public class OrderService {
 
     public ResponseEntity<Object> addOrderByUser(Authentication authentication, int id, Integer[] food_ID){
         try {
-            UserImp userImp = userService.getUserImps().get(authentication.getName());
+            UserImp userImp = userDetailsService.getUsers().get(authentication.getName());
             Restaurant restaurant = restaurants.get(id);
             ListMultimap<Food, Integer> costs = ArrayListMultimap.create();
             int totalCost = 0;
