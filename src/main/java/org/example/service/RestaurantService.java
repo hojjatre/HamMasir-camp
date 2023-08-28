@@ -63,10 +63,16 @@ public class RestaurantService {
                 .boxed()
                 .collect(Collectors.toMap(foodList::get, i -> restaurantDTO.getCost()[i]));
 
+        for (int i = 0; i < foods.size(); i++) {
+            if (costs.get(foods.get(i)) != null){
+                foods.get(i).setCost(costs.get(foods.get(i)));
+            }
+        }
+
         UserImp userImp = userDetailsService.getUsers().get(authentication.getName());
 
         Restaurant restaurant = new Restaurant(restaurantDTO.getName(),
-                userImp, restaurantDTO.getLocation(), costs);
+                userImp, restaurantDTO.getLocation(), foods);
         foods.stream().forEach(food -> System.out.println(food.getName() + ", " + food.getTypeFood()));
 
         restaurants.add(restaurant);
@@ -111,7 +117,6 @@ public class RestaurantService {
         if (check != null) {
             return check;
         }
-
         check = checkFoodAndRemove(selectRestaurant.get(0), foodID);
         if (check != null){
             return check;
@@ -121,17 +126,15 @@ public class RestaurantService {
     }
 
     public ResponseEntity<Object> addFood(Authentication authentication, int restaurantID,
-                                             Food food ,int code, Integer inputCost){
+                                             Food food ,int code){
         UserImp userImp = userDetailsService.getUsers().get(authentication.getName());
 
         ResponseEntity<Object> check = checkOwner(authentication, code, restaurantID, userImp);
         if (check != null) {
             return check;
         }
-        Map<Food, Integer> cost = new HashMap<>(selectRestaurant.get(0).getCost());
-        cost.put(food, inputCost);
-        foods.add(food);
-        selectRestaurant.get(0).setCost(cost);
+
+        selectRestaurant.get(0).addFood(food);
 
         return new ResponseEntity<>(selectRestaurant.get(0), HttpStatus.OK);
     }
@@ -146,6 +149,7 @@ public class RestaurantService {
                 restaurant -> restaurant.getId() == id && restaurant.getOwner() == userImp
         ).collect(Collectors.toList());
 
+
         if(selectRestaurant.isEmpty()){
             return new ResponseEntity<>("شما مالک رستوران نیستید.", HttpStatus.NOT_FOUND);
         }
@@ -155,33 +159,39 @@ public class RestaurantService {
 
     public ResponseEntity<Object> checkFoodAndChange(Restaurant restaurant, int foodID, Integer inputCost){
         boolean changed = false;
-        Map<Food, Integer> cost = new HashMap<>(restaurant.getCost());
-        for (Food food:restaurant.getCost().keySet()) {
+//        Map<Food, Integer> cost = new HashMap<>(restaurant.getCost());
+        for (Food food:restaurant.getFoods()) {
             if (food.getId() == foodID) {
-                cost.put(food, inputCost);
+                food.setCost(inputCost);
+//                cost.put(food, inputCost);
                 changed = true;
             }
         }
         if (!changed){
             return new ResponseEntity<>("غذای مورد نظر یافت نشد.", HttpStatus.NOT_FOUND);
         }
-        restaurant.setCost(cost);
+//        restaurant.setCost(cost);
         return null;
     }
 
     public ResponseEntity<Object> checkFoodAndRemove(Restaurant restaurant, int foodID){
         boolean changed = false;
-        Map<Food, Integer> cost = new HashMap<>(restaurant.getCost());
-        for (Food food:restaurant.getCost().keySet()) {
-            if (food.getId() == foodID) {
-                cost.remove(food);
-                changed = true;
+        Food removedFood = null;
+        for (Restaurant res:restaurants) {
+            for (Food food:res.getFoods()){
+                if (food.getId() == foodID) {
+                    removedFood = food;
+                    changed = true;
+                }
             }
         }
+        if(changed){
+            restaurant.removeFood(removedFood);
+        }
+
         if (!changed){
             return new ResponseEntity<>("غذای مورد نظر یافت نشد.", HttpStatus.NOT_FOUND);
         }
-        restaurant.setCost(cost);
         return null;
     }
 

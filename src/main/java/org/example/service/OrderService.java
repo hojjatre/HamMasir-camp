@@ -45,10 +45,10 @@ public class OrderService {
             int totalCost = 0;
             if (userImp != null){
                 for (Integer foodID: food_ID) {
-                    for (Food food:restaurant.getCost().keySet()) {
+                    for (Food food:restaurant.getFoods()) {
                         if (food.getId() == foodID){
-                            costs.put(food, restaurant.getCost().get(food));
-                            totalCost = totalCost + restaurant.getCost().get(food);
+                            costs.put(food, food.getCost());
+                            totalCost = totalCost + food.getCost();
                         }
                     }
                 }

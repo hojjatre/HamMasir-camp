@@ -3,6 +3,7 @@ package org.example.model;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.example.view.View;
 
+import java.util.List;
 import java.util.Map;
 
 public class Restaurant {
@@ -17,15 +18,15 @@ public class Restaurant {
     @JsonView({View.publicDetail.class, View.detailedInfo.class})
     private String location;
     @JsonView(View.detailedInfo.class)
-    private Map<Food, Integer> cost;
+    private List<Food> foods;
 
-    public Restaurant(String name, UserImp owner, String location, Map<Food, Integer> cost) {
+    public Restaurant(String name, UserImp owner, String location, List<Food> foods) {
         restaurantID = id;
         id = id + 1;
         this.name = name;
         this.owner = owner;
         this.location = location;
-        this.cost = cost;
+        this.foods = foods;
     }
 
     public int getId() {
@@ -56,15 +57,22 @@ public class Restaurant {
         this.location = location;
     }
 
-    public Map<Food, Integer> getCost() {
-        return cost;
+    public List<Food> getFoods() {
+        return foods;
     }
 
-    public void setCost(Map<Food, Integer> cost) {
-        this.cost = cost;
+    public void setFoods(List<Food> foods) {
+        this.foods = foods;
     }
 
-//    public void changeFoodCost(Food food, Integer inputCost){
+    public void addFood(Food food){
+        this.foods.add(food);
+    }
+
+    public void removeFood(Food food){
+        this.foods.remove(food);
+    }
+    //    public void changeFoodCost(Food food, Integer inputCost){
 //        Map<Food, Integer> temp = this.cost;
 //        temp.put(food, inputCost);
 //        this.cost = temp;

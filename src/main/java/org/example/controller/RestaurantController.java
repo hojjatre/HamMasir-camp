@@ -78,10 +78,9 @@ public class RestaurantController {
     @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Object> addFood(@PathVariable("restaurantID") int restaurantID,
                                           @RequestParam int code,
-                                          @RequestBody Food food,
-                                          @RequestParam Integer inputCost){
+                                          @RequestBody Food food){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return restaurantService.addFood(authentication, restaurantID, food, code, inputCost);
+        return restaurantService.addFood(authentication, restaurantID, food, code);
     }
 
 }

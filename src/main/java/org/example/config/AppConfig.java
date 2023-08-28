@@ -52,37 +52,27 @@ public class AppConfig implements CommandLineRunner {
         users.put(hojjat.getUsername(), hojjat);
 
 
-        Food kabob = new Food("کباب", TypeFood.IRANIAN, "100 گرم گوشت");
+        Food kabob = new Food("کباب", 4000, TypeFood.IRANIAN, "100 گرم گوشت");
         foods.add(kabob);
-        Food pizza = new Food("پیتزا سبزیجات", TypeFood.PIZZA, "ریحان + قارچ + جعفری");
+        Food pizza = new Food("پیتزا سبزیجات",2000, TypeFood.PIZZA, "ریحان + قارچ + جعفری");
         foods.add(pizza);
-        Food mahi = new Food("ماهی", TypeFood.SEA, "100 گرم ماهی");
+        Food mahi = new Food("ماهی", 5000, TypeFood.SEA, "100 گرم ماهی");
         foods.add(mahi);
-        Food mahi2 = new Food("ماهی", TypeFood.SEA, "200 گرم ماهی");
+        Food mahi2 = new Food("ماهی", 6000, TypeFood.SEA, "200 گرم ماهی");
         foods.add(mahi2);
-        Food morgh_sokhari = new Food("مرغ سوخاری", TypeFood.FRIED, "1 سینه + 1 ران + 1 بال");
+        Food morgh_sokhari = new Food("مرغ سوخاری",2000,TypeFood.FRIED, "1 سینه + 1 ران + 1 بال");
         foods.add(morgh_sokhari);
-        Food ghormeh_sabzi = new Food("قورمه سبزی", TypeFood.IRANIAN, "100 گرم گوشت + برنج 1 نفر");
+        Food ghormeh_sabzi = new Food("قورمه سبزی", 3000, TypeFood.IRANIAN, "100 گرم گوشت + برنج 1 نفر");
         foods.add(ghormeh_sabzi);
 
-        Map<Food, Integer> cost1 = Map.ofEntries(
-                Map.entry(kabob, 1000),
-                Map.entry(pizza, 2000),
-                Map.entry(mahi, 3000)
-        );
-
-        Map<Food, Integer> cost2 = Map.ofEntries(
-                Map.entry(mahi2, 5000),
-                Map.entry(morgh_sokhari, 5000),
-                Map.entry(ghormeh_sabzi, 3000)
-        );
-
+        List<Food> foods1 = new ArrayList<>(List.of(new Food[]{kabob, pizza, mahi}));
+        List<Food> foods2 = new ArrayList<>(List.of(new Food[]{mahi2, morgh_sokhari, ghormeh_sabzi}));
         Restaurant restaurant1 = new Restaurant("دربار", hojjat, "خیابان پیروزی - پیروزی 5",
-                cost1);
+                foods1);
         restaurants.add(restaurant1);
 
         Restaurant restaurant2 = new Restaurant("پدیده", hojjat, "خیابان پیروزی - پیروزی 40",
-                cost2);
+                foods2);
         restaurants.add(restaurant2);
 
 
