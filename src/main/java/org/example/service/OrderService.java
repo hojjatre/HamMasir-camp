@@ -33,23 +33,18 @@ public class OrderService {
         this.restaurantRepository = restaurantRepository;
     }
     @Transactional
-    public ResponseEntity<Object> addOrderByUser(Authentication authentication, int id, Integer[] food_ID){
+    public ResponseEntity<Object> addOrderByUser(Authentication authentication, Long id, Long[] food_ID){
         try {
             UserImp userImp = userRepository.findByUsername(authentication.getName());
             Restaurant restaurant = restaurantRepository.findByRestaurantID(id);
             Order order = new Order(restaurant, "همراه با قاشق یکبار مصرف");
-            ListMultimap<Food, Integer> costs = ArrayListMultimap.create();
+            List<Food> inputFoods = new ArrayList<>();
             int totalCost = 0;
             if (userImp != null){
-                System.out.println("Not null");
-                restaurant.getFoods().stream().forEach(fo -> System.out.println(fo.getFoodID() + ", " + fo.getName()));
-                for (Integer foodID: food_ID) {
-                    System.out.println(foodID);
+                for (Long foodID: food_ID) {
                     for (Food food:restaurant.getFoods()) {
-                        System.out.println("--- " + food.getFoodID());
                         if (food.getFoodID() == foodID){
-                            System.out.println(foodID + ", " + food.getCost());
-                            costs.put(food, food.getCost());
+                            inputFoods.add(food);
                             totalCost = totalCost + food.getCost();
                         }
                     }
@@ -59,20 +54,15 @@ public class OrderService {
                 new ResponseEntity<Object>("User not find, login.",HttpStatus.NOT_FOUND);
             }
 
-            Map<Food, List<Integer>> resultMap = new HashMap<>();
-
-            for (Food key : costs.keySet()) {
-                resultMap.put(key, costs.get(key));
-            }
 
 
             order.setTotalCost(totalCost);
-            order.setFood(resultMap.keySet().stream().toList());
-            orderRepository.save(order);
+            order.setFood(inputFoods);
+            order.setUser_order(userImp);
             userImp.getOrders().add(order);
             userRepository.save(userImp);
 
-            return new ResponseEntity<>("Done.", HttpStatus.OK);
+            return new ResponseEntity<>(order, HttpStatus.OK);
         }
         catch (Exception e){
             return new ResponseEntity<>("The restaurant is not exist. try again...", HttpStatus.NOT_FOUND);

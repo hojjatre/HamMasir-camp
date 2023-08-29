@@ -1,10 +1,12 @@
 package org.example.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.ListMultimap;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.view.View;
 
 import java.util.List;
 import java.util.Map;
@@ -19,21 +21,19 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
-    private int orderID;
+    @JsonView(View.addOrder.class)
+    private Long orderID;
 
-//    @OneToOne(mappedBy = "order")
-//    @JoinColumn(name = "restaurant_id", referencedColumnName = "order_id")
-//    @JoinColumn(name = "restaurant_id")
+
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
+    @JsonView(View.addOrder.class)
     private Restaurant restaurant;
 
-//    @Column(name = "user_id")
-//    private int user_id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private UserImp user;
+    private UserImp user_order;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -41,10 +41,14 @@ public class Order {
             joinColumns = {@JoinColumn(name = "order_id")},
             inverseJoinColumns = {@JoinColumn(name = "food_id")}
     )
+    @JsonView(View.addOrder.class)
     private List<Food> food;
 
-//    private Map<Food, List<Integer>> foodCost;
+
+    @JsonView(View.addOrder.class)
     private Integer totalCost;
+
+    @JsonView(View.addOrder.class)
     private String description;
 
     public Order(Restaurant restaurant, String description) {

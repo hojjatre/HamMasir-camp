@@ -82,9 +82,11 @@ public class AppConfig implements CommandLineRunner {
         Order order = new Order(restaurant1, "قاشق");
         order.setFood(foods3);
         order.setTotalCost(9000);
+        order.setUser_order(hojjat);
         hojjat.getOrders().add(order);
-        orderRepository.save(order);
         userRepository.save(hojjat);
+//        orderRepository.save(order);
+
 
     }
 

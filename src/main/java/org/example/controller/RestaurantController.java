@@ -43,13 +43,14 @@ public class RestaurantController {
     }
 
     @GetMapping("/restaurant-food")
-//    @JsonView(View.detailedInfo.class)
+    @JsonView(View.detailedForFoods.class)
     public ResponseEntity<List<Food>> restaurantFood(){
-        return new ResponseEntity<>(foodRepository.findAll(), HttpStatus.OK);
+        return ResponseEntity.ok(foodRepository.findAll());
     }
 
     @PostMapping("/add-restaurant")
     @PreAuthorize("hasRole('OWNER')")
+    @JsonView(View.operationOnRestaurant.class)
     public ResponseEntity<Object> addRestaurant(@RequestParam int code,
                                                 @RequestBody RestaurantDTO restaurantDTO){
 
@@ -59,7 +60,7 @@ public class RestaurantController {
 
     @PostMapping("/remove-restaurant/{id}")
     @PreAuthorize("hasRole('OWNER')")
-    public ResponseEntity<Object> removeRestaurant(@PathVariable("id") int id,
+    public ResponseEntity<Object> removeRestaurant(@PathVariable("id") Long id,
                                                    @RequestParam int code){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return restaurantService.removeRestaurant(authentication, id, code);
@@ -67,8 +68,9 @@ public class RestaurantController {
 
     @PostMapping("/change-cost-food/{foodID}/{restaurantID}")
     @PreAuthorize("hasRole('OWNER')")
+    @JsonView(View.operationOnRestaurant.class)
     public ResponseEntity<Object> changeCostFood(@PathVariable("foodID") int foodID,
-                                             @PathVariable("restaurantID") int restaurantID,
+                                             @PathVariable("restaurantID") Long restaurantID,
                                              @RequestParam int code,
                                              @RequestParam Integer inputCost){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -77,8 +79,9 @@ public class RestaurantController {
 
     @PostMapping("/remove-food/{foodID}/{restaurantID}")
     @PreAuthorize("hasRole('OWNER')")
+    @JsonView(View.operationOnRestaurant.class)
     public ResponseEntity<Object> removeFood(@PathVariable("foodID") int foodID,
-                                             @PathVariable("restaurantID") int restaurantID,
+                                             @PathVariable("restaurantID") Long restaurantID,
                                              @RequestParam int code){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return restaurantService.removeFood(authentication, restaurantID, foodID, code);
@@ -86,7 +89,8 @@ public class RestaurantController {
 
     @PostMapping("/add-food/{restaurantID}")
     @PreAuthorize("hasRole('OWNER')")
-    public ResponseEntity<Object> addFood(@PathVariable("restaurantID") int restaurantID,
+    @JsonView(View.operationOnRestaurant.class)
+    public ResponseEntity<Object> addFood(@PathVariable("restaurantID") Long restaurantID,
                                           @RequestParam int code,
                                           @RequestBody Food food){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

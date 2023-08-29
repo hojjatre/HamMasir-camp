@@ -65,11 +65,11 @@ public class RestaurantService {
                 userImp, restaurantDTO.getLocation(), foodList);
 
         restaurantRepository.save(restaurant);
-//        return new ResponseEntity<>("کاربر گرامی" + authentication.getName() + "رستوران شما اضافه به نام" + restaurant.getName() + "اضافه شد.", HttpStatus.OK);
-        return new ResponseEntity<>("رستوران شما اضافه شد.", HttpStatus.OK);
+        return new ResponseEntity<>(restaurant, HttpStatus.OK);
+//        return new ResponseEntity<>("رستوران شما اضافه شد.", HttpStatus.OK);
     }
 
-    public ResponseEntity<Object> removeRestaurant(Authentication authentication, int id, int code){
+    public ResponseEntity<Object> removeRestaurant(Authentication authentication, Long id, int code){
         UserImp userImp = userRepository.findByUsername(authentication.getName());
 
         ResponseEntity<Object> check = checkOwner(authentication, code, id, userImp);
@@ -81,7 +81,7 @@ public class RestaurantService {
         return new ResponseEntity<>("رستوران شما با موفقیت حذف شد.", HttpStatus.OK);
     }
 
-    public ResponseEntity<Object> changeCostFood(Authentication authentication, int restaurantID,
+    public ResponseEntity<Object> changeCostFood(Authentication authentication, Long restaurantID,
                                                  int foodID ,int code, Integer inputCost){
         UserImp userImp = userRepository.findByUsername(authentication.getName());
 
@@ -90,16 +90,13 @@ public class RestaurantService {
             return check;
         }
 
-        check = checkFoodAndChange(selectRestaurant, foodID, inputCost);
-//        if (check != null){
-//            return check;
-//        }
+        return checkFoodAndChange(selectRestaurant, foodID, inputCost);
 
-        return new ResponseEntity<>("قیمت غذای شما تغییر کرد.", HttpStatus.OK);
+//        return new ResponseEntity<>(, HttpStatus.OK);
 
     }
 
-    public ResponseEntity<Object> removeFood(Authentication authentication, int restaurantID,
+    public ResponseEntity<Object> removeFood(Authentication authentication, Long restaurantID,
                                              int foodID ,int code){
         UserImp userImp = userRepository.findByUsername(authentication.getName());
 
@@ -107,15 +104,10 @@ public class RestaurantService {
         if (check != null) {
             return check;
         }
-        check = checkFoodAndRemove(selectRestaurant, foodID);
-        if (check != null){
-            return check;
-        }
-
-        return new ResponseEntity<>("غذای مورد نظر حذف شد.", HttpStatus.OK);
+        return checkFoodAndRemove(selectRestaurant, foodID);
     }
 
-    public ResponseEntity<Object> addFood(Authentication authentication, int restaurantID,
+    public ResponseEntity<Object> addFood(Authentication authentication, Long restaurantID,
                                              Food food ,int code){
         UserImp userImp = userRepository.findByUsername(authentication.getName());
 
@@ -130,11 +122,11 @@ public class RestaurantService {
             restaurantRepository.save(selectRestaurant);
         }
 
-        return new ResponseEntity<>("غذای شما اضافه شد.", HttpStatus.OK);
+        return new ResponseEntity<>(restaurantRepository.findByRestaurantID(restaurantID), HttpStatus.OK);
     }
 
 
-    public ResponseEntity<Object> checkOwner(Authentication authentication, int code, int id,
+    public ResponseEntity<Object> checkOwner(Authentication authentication, int code, Long id,
                                              UserImp userImp){
         if (codeVerification.get(authentication.getName()) != code) {
             return new ResponseEntity<>("کد تایید شما درست نیست.", HttpStatus.FORBIDDEN);
@@ -172,9 +164,6 @@ public class RestaurantService {
     public ResponseEntity<Object> checkFoodAndRemove(Restaurant restaurant, int foodID){
         boolean changed = false;
         Food removedFood = foodRepository.findByFoodID(foodID);
-        System.out.println("-----" + foodID + ", " + removedFood.getFoodID() + ", " + removedFood);
-//        foodRepository.removeFoodByFoodID(foodID);
-//        foodRepository.removeByFoodID(foodID);
         if (removedFood != null){
             changed = true;
         }
@@ -185,7 +174,7 @@ public class RestaurantService {
         if (!changed){
             return new ResponseEntity<>("غذای مورد نظر یافت نشد.", HttpStatus.NOT_FOUND);
         }
-        return null;
+        return new ResponseEntity<>(restaurantRepository.findByRestaurantID(restaurant.getRestaurantID()), HttpStatus.OK);
     }
 
 

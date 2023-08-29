@@ -14,9 +14,9 @@ import java.util.List;
 
 public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
-    Restaurant findByRestaurantIDAndOwner(int restaurantID, UserImp owner);
+    Restaurant findByRestaurantIDAndOwner(Long restaurantID, UserImp owner);
 
-    Restaurant findByRestaurantID(int id);
+    Restaurant findByRestaurantID(Long id);
 
 
 }
