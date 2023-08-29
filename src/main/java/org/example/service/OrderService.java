@@ -2,15 +2,16 @@ package org.example.service;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import org.example.config.AppConfig;
+import jakarta.transaction.Transactional;
 import org.example.model.Food;
 import org.example.model.Order;
 import org.example.model.Restaurant;
 import org.example.model.UserImp;
-import org.example.schedule.ScheduleTask;
+import org.example.repository.OrderRepository;
+import org.example.repository.RestaurantRepository;
+import org.example.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -18,35 +19,36 @@ import java.util.*;
 
 @Service
 public class OrderService {
-    private AuthenticationManager authenticationManager;
-    private final UserDetailsServiceImpl userDetailsService;
 
-    Authentication authentication;
+    private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
+    private final RestaurantRepository restaurantRepository;
 
-    private final Map<String, Integer> codeVerification;
 
-    private List<Restaurant> restaurants = new ArrayList<>();
 
-    private List<Food> foods;
-
-    public OrderService(UserDetailsServiceImpl userDetailsService,
-                           ScheduleTask scheduleTask, AppConfig appConfig) {
-        this.userDetailsService = userDetailsService;
-        codeVerification = scheduleTask.getCodeVerification();
-        restaurants = appConfig.getRestaurants();
-        foods = appConfig.getFoods();
+    public OrderService(UserRepository userRepository, OrderRepository orderRepository,
+                        RestaurantRepository restaurantRepository) {
+        this.userRepository = userRepository;
+        this.orderRepository = orderRepository;
+        this.restaurantRepository = restaurantRepository;
     }
-
+    @Transactional
     public ResponseEntity<Object> addOrderByUser(Authentication authentication, int id, Integer[] food_ID){
         try {
-            UserImp userImp = userDetailsService.getUsers().get(authentication.getName());
-            Restaurant restaurant = restaurants.get(id);
+            UserImp userImp = userRepository.findByUsername(authentication.getName());
+            Restaurant restaurant = restaurantRepository.findByRestaurantID(id);
+            Order order = new Order(restaurant, "همراه با قاشق یکبار مصرف");
             ListMultimap<Food, Integer> costs = ArrayListMultimap.create();
             int totalCost = 0;
             if (userImp != null){
+                System.out.println("Not null");
+                restaurant.getFoods().stream().forEach(fo -> System.out.println(fo.getFoodID() + ", " + fo.getName()));
                 for (Integer foodID: food_ID) {
+                    System.out.println(foodID);
                     for (Food food:restaurant.getFoods()) {
-                        if (food.getId() == foodID){
+                        System.out.println("--- " + food.getFoodID());
+                        if (food.getFoodID() == foodID){
+                            System.out.println(foodID + ", " + food.getCost());
                             costs.put(food, food.getCost());
                             totalCost = totalCost + food.getCost();
                         }
@@ -63,13 +65,17 @@ public class OrderService {
                 resultMap.put(key, costs.get(key));
             }
 
-            Order order = new Order(restaurant, resultMap, "همراه با قاشق یکبار مصرف");
+
             order.setTotalCost(totalCost);
-            userImp.setOrders(Collections.singletonList(order));
-            return new ResponseEntity(userImp, HttpStatus.OK);
+            order.setFood(resultMap.keySet().stream().toList());
+            orderRepository.save(order);
+            userImp.getOrders().add(order);
+            userRepository.save(userImp);
+
+            return new ResponseEntity<>("Done.", HttpStatus.OK);
         }
         catch (Exception e){
-            return new ResponseEntity("The restaurant is not exist. try again...", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("The restaurant is not exist. try again...", HttpStatus.NOT_FOUND);
         }
 
     }

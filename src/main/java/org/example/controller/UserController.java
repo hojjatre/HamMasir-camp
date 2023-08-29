@@ -7,6 +7,7 @@ import org.example.dto.*;
 import org.example.model.ERole;
 import org.example.model.Role;
 import org.example.model.UserImp;
+import org.example.repository.RoleRepository;
 import org.example.repository.UserRepository;
 import org.example.schedule.ScheduleTask;
 import org.example.security.JwtUtilities;
@@ -39,22 +40,23 @@ public class UserController {
 
     final JwtUtilities jwtUtilities;
 
-    private Map<String, UserImp> users;
-    final
-    UserRepository userRepository;
+
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
 
 
     public UserController(AuthenticationManager authenticationManager,
                           ScheduleTask scheduleTask, AppConfig appConfig,
-                          PasswordEncoder encoder, JwtUtilities jwtUtilities, Map<String, UserImp> users, UserRepository userRepository) {
+                          PasswordEncoder encoder, JwtUtilities jwtUtilities,
+                          UserRepository userRepository, RoleRepository roleRepository) {
         this.authenticationManager = authenticationManager;
         this.appConfig = appConfig;
         this.encoder = encoder;
         this.jwtUtilities = jwtUtilities;
-        this.users = appConfig.getUsers();
         codeVerification = scheduleTask.getCodeVerification();
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
     @PostMapping("/login")
@@ -79,22 +81,22 @@ public class UserController {
 
     @PostMapping("/get-code-verification")
     @PreAuthorize("hasRole('OWNER')")
-    public ResponseEntity<Objects> getCodeVerification(){
+    public ResponseEntity<Object> getCodeVerification(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         System.out.println(authentication.getName());
         if(codeVerification.get(authentication.getName()) != null){
-            return new ResponseEntity(
+            return new ResponseEntity<>(
                     "and your verification code is: " + codeVerification.get(authentication.getName())
                     , HttpStatus.OK);
         }else {
-            return new ResponseEntity("You are not a OWNER.", HttpStatus.OK);
+            return new ResponseEntity<>("You are not a OWNER.", HttpStatus.OK);
         }
     }
 
     @GetMapping("/all-users")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserImp>> allUser(){
-        return new ResponseEntity(users, HttpStatus.OK);
+        return new ResponseEntity<>(userRepository.findAll(), HttpStatus.OK);
     }
 
     @PostMapping("/registration")
@@ -116,19 +118,25 @@ public class UserController {
         strRoles.forEach(role ->{
             switch (role){
                 case "admin":
-                    roles.add(appConfig.getRoles().get(ERole.ROLE_ADMIN.name()));
+                    Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    roles.add(adminRole);
                     break;
                 case "owner":
-                    roles.add(appConfig.getRoles().get(ERole.ROLE_OWNER.name()));
+                    Role ownerRole = roleRepository.findByName(ERole.ROLE_OWNER)
+                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    roles.add(ownerRole);
                     codeVerification.put(registrationRequest.getUsername(), (int) ((Math.random() * (99999 - 999)) + 999));
                     break;
                 default:
-                    roles.add(appConfig.getRoles().get(ERole.ROLE_USER.name()));
+                    Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    roles.add(userRole);
             }
         });
 
         user.setRoles(roles);
-        users.put(registrationRequest.getUsername(), user);
+        userRepository.save(user);
         return ResponseEntity.ok(registrationRequest.getUsername() + " registered successfully!");
     }
 }

@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonView;
 import org.example.model.Food;
 import org.example.model.Restaurant;
 import org.example.dto.RestaurantDTO;
+import org.example.repository.FoodRepository;
+import org.example.repository.RestaurantRepository;
+import org.example.repository.UserRepository;
 import org.example.service.RestaurantService;
 import org.example.view.View;
 import org.springframework.http.HttpStatus;
@@ -21,28 +24,35 @@ public class RestaurantController {
 
     private final RestaurantService restaurantService;
 
-    public RestaurantController(RestaurantService restaurants){
+    private final RestaurantRepository restaurantRepository;
+    private final FoodRepository foodRepository;
+    private final UserRepository userRepository;
+
+    public RestaurantController(RestaurantService restaurants, RestaurantRepository restaurantRepository, FoodRepository foodRepository, UserRepository userRepository){
         this.restaurantService = restaurants;
+        this.restaurantRepository = restaurantRepository;
+        this.foodRepository = foodRepository;
+        this.userRepository = userRepository;
     }
 
 
     @GetMapping("/all-restaurant")
-//    @JsonView(View.publicDetail.class)
+    @JsonView(View.publicDetail.class)
     public ResponseEntity<List<Restaurant>> allRestaurant(){
-        return new ResponseEntity<>(restaurantService.getRestaurants(), HttpStatus.OK);
+        return new ResponseEntity<>(restaurantRepository.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/restaurant-food")
-    @JsonView(View.detailedInfo.class)
-    public ResponseEntity<List<Restaurant>> restaurantFood(){
-        return new ResponseEntity<>(restaurantService.getRestaurants(), HttpStatus.OK);
+//    @JsonView(View.detailedInfo.class)
+    public ResponseEntity<List<Food>> restaurantFood(){
+        return new ResponseEntity<>(foodRepository.findAll(), HttpStatus.OK);
     }
 
     @PostMapping("/add-restaurant")
     @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Object> addRestaurant(@RequestParam int code,
                                                 @RequestBody RestaurantDTO restaurantDTO){
-        System.out.println("------------");
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return restaurantService.addRestaurant(authentication, code, restaurantDTO);
     }

@@ -1,14 +1,26 @@
 package org.example.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.example.view.View;
 
+@Entity
+@Table(name = "food")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Food {
 
-    private static int id = 0;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "food_id")
     private int foodID;
     @JsonView(View.detailedInfo.class)
     private String name;
+    @Enumerated(EnumType.STRING)
     @JsonView(View.detailedInfo.class)
     private TypeFood typeFood;
     @JsonView(View.detailedInfo.class)
@@ -16,25 +28,20 @@ public class Food {
 
     private String description;
 
-    public Food(String name, TypeFood typeFood, String description) {
-        foodID = id;
-        id = id + 1;
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
+//    @JoinColumn(name = "food_id")
+    private Restaurant restaurant;
+
+    public Food(String name, TypeFood typeFood, int cost, String description) {
         this.name = name;
         this.typeFood = typeFood;
+        this.cost = cost;
         this.description = description;
     }
-    public Food(){
-        foodID = id;
-        id = id + 1;
-    }
 
-    public int getId() {
-        return foodID;
-    }
 
     public Food(String name, int cost, TypeFood typeFood, String description) {
-        foodID = id;
-        id = id + 1;
         this.name = name;
         this.cost = cost;
         this.typeFood = typeFood;
@@ -42,40 +49,9 @@ public class Food {
     }
 
 
-    public int getCost() {
-        return cost;
-    }
-
-    public void setCost(int cost) {
-        this.cost = cost;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public TypeFood getTypeFood() {
-        return typeFood;
-    }
-
-    public void setTypeFood(TypeFood typeFood) {
-        this.typeFood = typeFood;
-    }
 
     @Override
     public String toString() {
-        return this.getId() + " - " +name + " - " + typeFood.getTypeFood();
+        return this.getFoodID() + " - " +name + " - " + typeFood.getTypeFood();
     }
 }

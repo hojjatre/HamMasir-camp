@@ -1,60 +1,57 @@
 package org.example.model;
 
 import com.google.common.collect.ListMultimap;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.Map;
 
+@Entity
+@Table(name = "orders")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Order {
-    private static int id = 0;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_id")
     private int orderID;
+
+//    @OneToOne(mappedBy = "order")
+//    @JoinColumn(name = "restaurant_id", referencedColumnName = "order_id")
+//    @JoinColumn(name = "restaurant_id")
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
-    private Map<Food, List<Integer>> foodCost;
+
+//    @Column(name = "user_id")
+//    private int user_id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserImp user;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "order_food",
+            joinColumns = {@JoinColumn(name = "order_id")},
+            inverseJoinColumns = {@JoinColumn(name = "food_id")}
+    )
+    private List<Food> food;
+
+//    private Map<Food, List<Integer>> foodCost;
     private Integer totalCost;
     private String description;
 
-    public Order(Restaurant restaurant, Map<Food, List<Integer>> foodCost, String description) {
+    public Order(Restaurant restaurant, String description) {
         this.restaurant = restaurant;
-        this.foodCost = foodCost;
-        this.description = description;
-        orderID = id;
-        id = id + 1;
-    }
-
-    public int getId() {
-        return orderID;
-    }
-
-    public Restaurant getRestaurant() {
-        return restaurant;
-    }
-
-    public void setRestaurant(Restaurant restaurant) {
-        this.restaurant = restaurant;
-    }
-
-    public Map<Food, List<Integer>> getFoodCost() {
-        return foodCost;
-    }
-
-    public void setFoodCost(Map<Food, List<Integer>> foodCost) {
-        this.foodCost = foodCost;
-    }
-
-    public Integer getTotalCost() {
-        return totalCost;
-    }
-
-    public void setTotalCost(Integer totalCost) {
-        this.totalCost = totalCost;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
         this.description = description;
     }
+
+
 
 }
