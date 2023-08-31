@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.view.View;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -18,16 +19,15 @@ import java.util.Map;
 @NoArgsConstructor
 public class Order {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
-    @JsonView(View.addOrder.class)
     private Long orderID;
 
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
-    @JsonView(View.addOrder.class)
     private Restaurant restaurant;
 
 
@@ -41,19 +41,19 @@ public class Order {
             joinColumns = {@JoinColumn(name = "order_id")},
             inverseJoinColumns = {@JoinColumn(name = "food_id")}
     )
-    @JsonView(View.addOrder.class)
     private List<Food> food;
 
 
-    @JsonView(View.addOrder.class)
     private Integer totalCost;
 
-    @JsonView(View.addOrder.class)
     private String description;
+
+    private Date date;
 
     public Order(Restaurant restaurant, String description) {
         this.restaurant = restaurant;
         this.description = description;
+        this.date = new Date();
     }
 
 

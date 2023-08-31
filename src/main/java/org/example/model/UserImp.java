@@ -1,13 +1,13 @@
 package org.example.model;
 
-import com.fasterxml.jackson.annotation.JsonView;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.view.View;
+
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,22 +29,22 @@ public class UserImp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    @JsonView(View.operationOnRestaurant.class)
     private Long userID;
 
 
     @NotBlank
     @Column(name = "username")
-    @JsonView({View.operationOnRestaurant.class, View.addOrder.class})
+
     private String username;
+
     @NotBlank
     @Email
     @Column(name = "email")
-    @JsonView(View.operationOnRestaurant.class)
     private String email;
     @NotBlank
     @Column(name = "password")
     private String password;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role",

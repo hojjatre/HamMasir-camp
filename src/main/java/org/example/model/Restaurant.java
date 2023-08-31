@@ -18,12 +18,10 @@ public class Restaurant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(View.publicDetail.class)
     @Column(name = "restaurant_id")
     private Long restaurantID;
 
 
-    @JsonView({View.publicDetail.class, View.detailedForFoods.class, View.addOrder.class})
     private String name;
 
     @JsonView(View.privateDetail.class)
@@ -31,15 +29,12 @@ public class Restaurant {
     @JoinColumn(name = "user_id")
     private UserImp owner;
 
-    @JsonView({View.publicDetail.class, View.detailedForFoods.class})
     private String location;
 
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "restaurant_id")
-    @JsonView(View.operationOnRestaurant.class)
 //    @OneToMany(cascade = CascadeType.ALL, mappedBy = "restaurant")
-//    @JsonView(View.detailedForFoods.class)
     private List<Food> foods;
 
     @OneToMany(cascade = CascadeType.REMOVE)

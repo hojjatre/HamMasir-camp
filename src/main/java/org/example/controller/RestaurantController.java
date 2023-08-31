@@ -1,6 +1,8 @@
 package org.example.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import org.example.dto.FoodView;
+import org.example.dto.RestaurantView;
 import org.example.model.Food;
 import org.example.model.Restaurant;
 import org.example.dto.RestaurantDTO;
@@ -37,20 +39,17 @@ public class RestaurantController {
 
 
     @GetMapping("/all-restaurant")
-    @JsonView(View.publicDetail.class)
-    public ResponseEntity<List<Restaurant>> allRestaurant(){
-        return new ResponseEntity<>(restaurantRepository.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<RestaurantView>> allRestaurant(){
+        return new ResponseEntity<>(restaurantRepository.findAllRestaurant(), HttpStatus.OK);
     }
 
     @GetMapping("/restaurant-food")
-    @JsonView(View.detailedForFoods.class)
-    public ResponseEntity<List<Food>> restaurantFood(){
-        return ResponseEntity.ok(foodRepository.findAll());
+    public ResponseEntity<List<FoodView>> restaurantFood(){
+        return ResponseEntity.ok(foodRepository.allFoods());
     }
 
     @PostMapping("/add-restaurant")
     @PreAuthorize("hasRole('OWNER')")
-    @JsonView(View.operationOnRestaurant.class)
     public ResponseEntity<Object> addRestaurant(@RequestParam int code,
                                                 @RequestBody RestaurantDTO restaurantDTO){
 
@@ -68,8 +67,7 @@ public class RestaurantController {
 
     @PostMapping("/change-cost-food/{foodID}/{restaurantID}")
     @PreAuthorize("hasRole('OWNER')")
-    @JsonView(View.operationOnRestaurant.class)
-    public ResponseEntity<Object> changeCostFood(@PathVariable("foodID") int foodID,
+    public ResponseEntity<Object> changeCostFood(@PathVariable("foodID") Long foodID,
                                              @PathVariable("restaurantID") Long restaurantID,
                                              @RequestParam int code,
                                              @RequestParam Integer inputCost){
@@ -79,8 +77,7 @@ public class RestaurantController {
 
     @PostMapping("/remove-food/{foodID}/{restaurantID}")
     @PreAuthorize("hasRole('OWNER')")
-    @JsonView(View.operationOnRestaurant.class)
-    public ResponseEntity<Object> removeFood(@PathVariable("foodID") int foodID,
+    public ResponseEntity<Object> removeFood(@PathVariable("foodID") Long foodID,
                                              @PathVariable("restaurantID") Long restaurantID,
                                              @RequestParam int code){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -89,12 +86,22 @@ public class RestaurantController {
 
     @PostMapping("/add-food/{restaurantID}")
     @PreAuthorize("hasRole('OWNER')")
-    @JsonView(View.operationOnRestaurant.class)
     public ResponseEntity<Object> addFood(@PathVariable("restaurantID") Long restaurantID,
                                           @RequestParam int code,
                                           @RequestBody Food food){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return restaurantService.addFood(authentication, restaurantID, food, code);
+    }
+
+    @GetMapping("/most-expensive-food")
+    public ResponseEntity<RestaurantView> getRestaurantWithMostExpensiveFood(){
+        return ResponseEntity.ok(restaurantRepository.findTopByOrderByFoodsCostDesc());
+    }
+
+    @GetMapping("/by-food-description")
+    public ResponseEntity<List<RestaurantView>> getRestaurantsByFoodDescription(@RequestParam String description) {
+        List<RestaurantView> customResponses = restaurantRepository.findByFoodsDescriptionContaining(description);
+        return ResponseEntity.ok(customResponses);
     }
 
 }

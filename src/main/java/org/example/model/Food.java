@@ -17,27 +17,21 @@ public class Food {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "food_id")
-    @JsonView({View.detailedForFoods.class, View.operationOnRestaurant.class})
     private Long foodID;
 
-    @JsonView({View.detailedForFoods.class, View.operationOnRestaurant.class, View.addOrder.class})
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @JsonView({View.detailedForFoods.class, View.operationOnRestaurant.class, View.addOrder.class})
     private TypeFood typeFood;
 
 
-    @JsonView({View.detailedForFoods.class, View.operationOnRestaurant.class, View.addOrder.class})
     private int cost;
 
-    @JsonView({View.detailedForFoods.class, View.operationOnRestaurant.class, View.addOrder.class})
     private String description;
 
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
-    @JsonView(View.detailedForFoods.class)
     private Restaurant restaurant;
 
     public Food(String name, TypeFood typeFood, int cost, String description) {

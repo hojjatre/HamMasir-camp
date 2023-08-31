@@ -3,6 +3,7 @@ package org.example.service;
 import jakarta.transaction.Transactional;
 import org.example.config.AppConfig;
 import org.example.dto.RestaurantDTO;
+import org.example.dto.RestaurantView;
 import org.example.model.*;
 import org.example.repository.FoodRepository;
 import org.example.repository.RestaurantRepository;
@@ -20,9 +21,6 @@ import java.util.stream.IntStream;
 @Service
 public class RestaurantService {
 
-    private final UserDetailsServiceImpl userDetailsService;
-
-    private Authentication authentication;
 
     private final Map<String, Integer> codeVerification;
     private final RestaurantRepository restaurantRepository;
@@ -30,9 +28,8 @@ public class RestaurantService {
     private final UserRepository userRepository;
     private Restaurant selectRestaurant;
 
-    public RestaurantService(UserDetailsServiceImpl userDetailsService,
-                             ScheduleTask scheduleTask, AppConfig appConfig, RestaurantRepository restaurantRepository, FoodRepository foodRepository, UserRepository userRepository) {
-        this.userDetailsService = userDetailsService;
+    public RestaurantService(ScheduleTask scheduleTask, RestaurantRepository restaurantRepository,
+                             FoodRepository foodRepository, UserRepository userRepository) {
         codeVerification = scheduleTask.getCodeVerification();
         this.restaurantRepository = restaurantRepository;
         this.foodRepository = foodRepository;
@@ -58,15 +55,14 @@ public class RestaurantService {
                 .collect(Collectors.toList());
         foodRepository.saveAll(foodList);
 
-//        UserImp userImp = userDetailsService.getUsers().get(authentication.getName());
         UserImp userImp = userRepository.findByUsername(authentication.getName());
 
         Restaurant restaurant = new Restaurant(restaurantDTO.getName(),
                 userImp, restaurantDTO.getLocation(), foodList);
 
         restaurantRepository.save(restaurant);
-        return new ResponseEntity<>(restaurant, HttpStatus.OK);
-//        return new ResponseEntity<>("رستوران شما اضافه شد.", HttpStatus.OK);
+        RestaurantView restaurantView = restaurantRepository.findRestaurant(restaurant.getRestaurantID());
+        return new ResponseEntity<>(restaurantView, HttpStatus.OK);
     }
 
     public ResponseEntity<Object> removeRestaurant(Authentication authentication, Long id, int code){
@@ -81,8 +77,9 @@ public class RestaurantService {
         return new ResponseEntity<>("رستوران شما با موفقیت حذف شد.", HttpStatus.OK);
     }
 
+
     public ResponseEntity<Object> changeCostFood(Authentication authentication, Long restaurantID,
-                                                 int foodID ,int code, Integer inputCost){
+                                                 Long foodID ,int code, Integer inputCost){
         UserImp userImp = userRepository.findByUsername(authentication.getName());
 
         ResponseEntity<Object> check = checkOwner(authentication, code, restaurantID, userImp);
@@ -92,12 +89,10 @@ public class RestaurantService {
 
         return checkFoodAndChange(selectRestaurant, foodID, inputCost);
 
-//        return new ResponseEntity<>(, HttpStatus.OK);
-
     }
 
     public ResponseEntity<Object> removeFood(Authentication authentication, Long restaurantID,
-                                             int foodID ,int code){
+                                             Long foodID ,int code){
         UserImp userImp = userRepository.findByUsername(authentication.getName());
 
         ResponseEntity<Object> check = checkOwner(authentication, code, restaurantID, userImp);
@@ -122,7 +117,7 @@ public class RestaurantService {
             restaurantRepository.save(selectRestaurant);
         }
 
-        return new ResponseEntity<>(restaurantRepository.findByRestaurantID(restaurantID), HttpStatus.OK);
+        return new ResponseEntity<>(restaurantRepository.findByRestaurantID(restaurantID, RestaurantView.class), HttpStatus.OK);
     }
 
 
@@ -141,8 +136,7 @@ public class RestaurantService {
         return null;
     }
     @Transactional
-    public ResponseEntity<Object> checkFoodAndChange(Restaurant restaurant, int foodID, Integer inputCost){
-//        boolean changed = false;
+    public ResponseEntity<Object> checkFoodAndChange(Restaurant restaurant, Long foodID, Integer inputCost){
         Food food = foodRepository.findByFoodID(foodID);
         restaurant.getFoods().stream()
                 .filter(f -> f.getFoodID() == foodID)
@@ -151,17 +145,11 @@ public class RestaurantService {
         food.setCost(inputCost);
         restaurantRepository.save(restaurant);
         foodRepository.save(food);
-//        foodRepository.changeCostFood(foodID, inputCost);
-//        if(food == null){
-//            changed = true;
-//        }
-//        if (!changed){
-//            return new ResponseEntity<>("غذای مورد نظر یافت نشد.", HttpStatus.NOT_FOUND);
-//        }
-        return new ResponseEntity<>(restaurant, HttpStatus.OK);
+        return new ResponseEntity<>(restaurantRepository.findByRestaurantID(restaurant.getRestaurantID(),
+                RestaurantView.class), HttpStatus.OK);
     }
     @Transactional
-    public ResponseEntity<Object> checkFoodAndRemove(Restaurant restaurant, int foodID){
+    public ResponseEntity<Object> checkFoodAndRemove(Restaurant restaurant, Long foodID){
         boolean changed = false;
         Food removedFood = foodRepository.findByFoodID(foodID);
         if (removedFood != null){
@@ -174,7 +162,7 @@ public class RestaurantService {
         if (!changed){
             return new ResponseEntity<>("غذای مورد نظر یافت نشد.", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(restaurantRepository.findByRestaurantID(restaurant.getRestaurantID()), HttpStatus.OK);
+        return new ResponseEntity<>(restaurantRepository.findByRestaurantID(restaurant.getRestaurantID(), RestaurantView.class), HttpStatus.OK);
     }
 
 
