@@ -1,4 +1,4 @@
-package org.example.dto;
+package org.example.dto.userimp;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

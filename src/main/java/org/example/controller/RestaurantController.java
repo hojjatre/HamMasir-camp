@@ -1,16 +1,13 @@
 package org.example.controller;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import org.example.dto.FoodView;
-import org.example.dto.RestaurantView;
+import org.example.dto.restaurant.RestaurantView;
 import org.example.model.Food;
-import org.example.model.Restaurant;
-import org.example.dto.RestaurantDTO;
+import org.example.dto.restaurant.RestaurantDTO;
 import org.example.repository.FoodRepository;
 import org.example.repository.RestaurantRepository;
 import org.example.repository.UserRepository;
 import org.example.service.RestaurantService;
-import org.example.view.View;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -52,7 +49,6 @@ public class RestaurantController {
     @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Object> addRestaurant(@RequestParam int code,
                                                 @RequestBody RestaurantDTO restaurantDTO){
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return restaurantService.addRestaurant(authentication, code, restaurantDTO);
     }

@@ -3,7 +3,7 @@ package org.example.testing;
 import org.example.config.AppConfig;
 import org.example.config.WebSecurityConfig;
 import org.example.controller.UserController;
-import org.example.dto.LoginRequest;
+import org.example.dto.userimp.LoginRequest;
 import org.example.dto.MakeOrderDTO;
 import org.example.schedule.ScheduleTask;
 import org.example.service.UserDetailsServiceImpl;

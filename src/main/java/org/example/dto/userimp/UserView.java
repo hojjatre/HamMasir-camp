@@ -1,4 +1,4 @@
-package org.example.dto;
+package org.example.dto.userimp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.example.model.Order;
@@ -14,17 +14,17 @@ public interface UserView {
     @Value("#{target.email}")
     String getEmail();
 
-    @JsonIgnore
+//    @JsonIgnore
     @Value("#{target.orders}")
-    List<Order> getOrders();
+    List<UserOrderView> getOrders();
 
-    default int getTotalCost(){
-        List<Order> orders = getOrders();
-        int totalCost = 0;
-        for (Order order: orders) {
-            totalCost = totalCost + order.getTotalCost();
-        }
-        return totalCost;
-    }
+//    default int getTotalCost(){
+//        List<Order> orders = getOrders();
+//        int totalCost = 0;
+//        for (Order order: orders) {
+//            totalCost = totalCost + order.getTotalCost();
+//        }
+//        return totalCost;
+//    }
 
 }

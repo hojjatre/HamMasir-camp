@@ -3,7 +3,9 @@ package org.example.controller;
 
 import jakarta.validation.Valid;
 import org.example.config.AppConfig;
-import org.example.dto.*;
+import org.example.dto.userimp.LoginRequest;
+import org.example.dto.userimp.RegistrationRequest;
+import org.example.dto.userimp.UserInfoResponse;
 import org.example.model.ERole;
 import org.example.model.Role;
 import org.example.model.UserImp;
