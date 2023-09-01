@@ -164,6 +164,11 @@ private Specification<Order> buildQuery(OrderSearchCriteria criteria) {
         };
     }
 ```
+- the Specification interface will serve as a container for defining the dynamic query predicates using criteria-based conditions.
+- The toPredicate method takes three parameters: **Root**, **CriteriaQuery**, and **CriteriaBuilder**.
+- The **Root** object represents the entity being queried and allows access to its attributes.
+- The **CriteriaQuery** object defines the query structure and can be used to modify the query aspects like ordering and grouping.
+- The **CriteriaBuilder** object provides a set of methods for building the criteria-based predicates.
 4. Find Most Expensive Food
 ```java
 RestaurantView findTopByOrderByFoodsCostDesc();
@@ -173,3 +178,4 @@ RestaurantView findTopByOrderByFoodsCostDesc();
 List<RestaurantView> findByFoodsDescriptionContaining(String description);
 ```
 </details>
+
