@@ -41,9 +41,9 @@
         </dependency>
         <!-- https://mavenlibs.com/maven/dependency/redis.clients/jedis -->
         <dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-            <version>4.4.3</version>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.20.0</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

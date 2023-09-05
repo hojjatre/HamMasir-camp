@@ -8,7 +8,7 @@ import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
 
-@RedisHash("UserImp")
+//@RedisHash("UserImp")
 @Getter
 @Setter
 @NoArgsConstructor
