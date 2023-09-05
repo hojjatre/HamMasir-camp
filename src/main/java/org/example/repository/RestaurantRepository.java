@@ -1,5 +1,6 @@
 package org.example.repository;
 
+import org.example.dto.restaurant.RestaurantDTOredis;
 import org.example.dto.restaurant.RestaurantView;
 import org.example.model.Restaurant;
 import org.example.model.UserImp;
@@ -15,6 +16,8 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
     <T> T findByRestaurantID(Long id, Class<T> type);
 
+    @Query("SELECT NEW org.example.dto.restaurant.RestaurantDTOredis(r.restaurantID, r.name, r.location) from Restaurant r where r.restaurantID = :id")
+    RestaurantDTOredis findRestaurantForRedis(@Param("id") Long id);
 
     @Query("select r from Restaurant r")
     List<RestaurantView> findAllRestaurant();

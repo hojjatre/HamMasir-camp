@@ -1,7 +1,11 @@
 package org.example.config;
 
+import org.example.cachemanager.RestaurantCache;
+import org.example.dto.restaurant.RestaurantDTOredis;
+import org.example.dto.restaurant.RestaurantView;
 import org.example.model.*;
 import org.example.repository.*;
+import org.redisson.api.RedissonClient;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,19 +23,27 @@ public class AppConfig implements CommandLineRunner {
     private final RestaurantRepository restaurantRepository;
     private final OrderRepository orderRepository;
 
+    private final RedisConfig redisConfig;
+
+    private final RestaurantCache restaurantCache;
 
 
-    public AppConfig(Map<String, Integer> codeVerification, UserRepository userRepository, RoleRepository roleRepository, FoodRepository foodRepository, RestaurantRepository restaurantRepository, OrderRepository orderRepository) {
+
+    public AppConfig(Map<String, Integer> codeVerification, UserRepository userRepository, RoleRepository roleRepository, FoodRepository foodRepository, RestaurantRepository restaurantRepository, OrderRepository orderRepository, RedisConfig redisConfig, RestaurantCache restaurantCache) {
         this.codeVerification = codeVerification;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.foodRepository = foodRepository;
         this.restaurantRepository = restaurantRepository;
         this.orderRepository = orderRepository;
+        this.redisConfig = redisConfig;
+        this.restaurantCache = restaurantCache;
     }
 
     @Override
     public void run(String... args) throws Exception {
+
+        RedissonClient redissonClient = redisConfig.redissionClient();
 
         Role role_user = new Role(ERole.ROLE_USER);
         roleRepository.save(role_user);
@@ -73,11 +85,15 @@ public class AppConfig implements CommandLineRunner {
         Restaurant restaurant1 = new Restaurant("دربار", hojjat, "خیابان پیروزی - پیروزی 5",
                 foods1);
         restaurantRepository.save(restaurant1);
+        restaurantCache.addRestaurantToCache(redissonClient, restaurantRepository.findRestaurantForRedis(restaurant1.getRestaurantID()), restaurant1.getRestaurantID());
+
 
 
         Restaurant restaurant2 = new Restaurant("پدیده", hojjat, "خیابان پیروزی - پیروزی 40",
                 foods2);
         restaurantRepository.save(restaurant2);
+        restaurantCache.addRestaurantToCache(redissonClient, restaurantRepository.findRestaurantForRedis(restaurant2.getRestaurantID()), restaurant2.getRestaurantID());
+
 
         Order order = new Order(restaurant1, "قاشق");
         order.setFood(foods3);
