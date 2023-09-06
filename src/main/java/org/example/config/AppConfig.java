@@ -85,14 +85,14 @@ public class AppConfig implements CommandLineRunner {
         Restaurant restaurant1 = new Restaurant("دربار", hojjat, "خیابان پیروزی - پیروزی 5",
                 foods1);
         restaurantRepository.save(restaurant1);
-        restaurantCache.addRestaurantToCache(redissonClient, restaurantRepository.findRestaurantForRedis(restaurant1.getRestaurantID()), restaurant1.getRestaurantID());
+//        restaurantCache.addRestaurantToCache(redissonClient, restaurantRepository.findRestaurantForRedis(restaurant1.getRestaurantID()), restaurant1.getRestaurantID());
 
 
 
         Restaurant restaurant2 = new Restaurant("پدیده", hojjat, "خیابان پیروزی - پیروزی 40",
                 foods2);
         restaurantRepository.save(restaurant2);
-        restaurantCache.addRestaurantToCache(redissonClient, restaurantRepository.findRestaurantForRedis(restaurant2.getRestaurantID()), restaurant2.getRestaurantID());
+//        restaurantCache.addRestaurantToCache(redissonClient, restaurantRepository.findRestaurantForRedis(restaurant2.getRestaurantID()), restaurant2.getRestaurantID());
 
 
         Order order = new Order(restaurant1, "قاشق");
@@ -102,7 +102,7 @@ public class AppConfig implements CommandLineRunner {
         hojjat.getOrders().add(order);
         userRepository.save(hojjat);
 //        orderRepository.save(order);
-
+//        restaurantCache.loadDataToCache(redissonClient);
 
     }
 

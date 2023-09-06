@@ -1,10 +1,15 @@
 package org.example.dto.restaurant;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
 public interface RestaurantView {
+
+    @JsonIgnore
+    @Value("#{target.restaurantID}")
+    Long getRestaurantID();
     @Value("#{target.name}")
     String getName();
 

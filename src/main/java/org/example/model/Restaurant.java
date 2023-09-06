@@ -14,6 +14,35 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@NamedEntityGraph(
+        name = "graph.restaurant",
+        attributeNodes = {
+                @NamedAttributeNode("restaurantID"),
+                @NamedAttributeNode("name"),
+                @NamedAttributeNode("location"),
+                @NamedAttributeNode(value = "owner", subgraph = "graph.user"),
+                @NamedAttributeNode(value = "foods", subgraph = "graph.foods"),
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "graph.foods",
+                        attributeNodes = {
+                                @NamedAttributeNode("foodID"),
+                                @NamedAttributeNode("name"),
+                                @NamedAttributeNode("typeFood"),
+                                @NamedAttributeNode("cost"),
+                                @NamedAttributeNode("description")
+                        }
+                ),
+                @NamedSubgraph(
+                        name = "graph.user",
+                        attributeNodes = {
+                                @NamedAttributeNode("username"),
+                        }
+                )
+
+        }
+)
 public class Restaurant {
 
     @Id

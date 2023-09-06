@@ -49,20 +49,16 @@ public class RestaurantController {
 
     @GetMapping("/all-restaurant")
     public ResponseEntity<Object> allRestaurant(){
-        RMap<Long, RestaurantDTOredis> allRestaurantCache = restaurantCache.getAllRestaurant(redisConfig.redissionClient());
-        if (allRestaurantCache.isEmpty()){
-            return new ResponseEntity<>(restaurantRepository.findAllRestaurant(), HttpStatus.OK);
-        }else {
-            System.out.println("From cache...");
-            return new ResponseEntity<>(allRestaurantCache.values(), HttpStatus.OK);
-        }
-
+        restaurantCache.loadDataToCache();
+        System.out.println("Data into Cache");
+        return new ResponseEntity<>(restaurantRepository.findAllRestaurant(), HttpStatus.OK);
     }
 
     @GetMapping("/restaurant-food")
     public ResponseEntity<List<FoodView>> restaurantFood(){
         return ResponseEntity.ok(foodRepository.allFoods());
     }
+
 
     @PostMapping("/add-restaurant")
     @PreAuthorize("hasRole('OWNER')")
