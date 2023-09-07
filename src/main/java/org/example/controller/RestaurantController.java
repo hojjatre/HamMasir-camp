@@ -1,13 +1,18 @@
 package org.example.controller;
 
+import org.example.cachemanager.RestaurantCache;
+import org.example.config.RedisConfig;
 import org.example.dto.FoodView;
+import org.example.dto.restaurant.RestaurantDTOredis;
 import org.example.dto.restaurant.RestaurantView;
 import org.example.model.Food;
 import org.example.dto.restaurant.RestaurantDTO;
+import org.example.model.Restaurant;
 import org.example.repository.FoodRepository;
 import org.example.repository.RestaurantRepository;
 import org.example.repository.UserRepository;
 import org.example.service.RestaurantService;
+import org.redisson.api.RMap;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/restaurant")
@@ -27,16 +33,24 @@ public class RestaurantController {
     private final FoodRepository foodRepository;
     private final UserRepository userRepository;
 
-    public RestaurantController(RestaurantService restaurants, RestaurantRepository restaurantRepository, FoodRepository foodRepository, UserRepository userRepository){
+    private final RestaurantCache restaurantCache;
+
+    private final RedisConfig redisConfig;
+
+    public RestaurantController(RestaurantService restaurants, RestaurantRepository restaurantRepository, FoodRepository foodRepository, UserRepository userRepository, RestaurantCache restaurantCache, RedisConfig redisConfig){
         this.restaurantService = restaurants;
         this.restaurantRepository = restaurantRepository;
         this.foodRepository = foodRepository;
         this.userRepository = userRepository;
+        this.restaurantCache = restaurantCache;
+        this.redisConfig = redisConfig;
     }
 
 
     @GetMapping("/all-restaurant")
-    public ResponseEntity<List<RestaurantView>> allRestaurant(){
+    public ResponseEntity<Object> allRestaurant(){
+        restaurantCache.loadDataToCache();
+        System.out.println("Data into Cache");
         return new ResponseEntity<>(restaurantRepository.findAllRestaurant(), HttpStatus.OK);
     }
 
@@ -44,6 +58,7 @@ public class RestaurantController {
     public ResponseEntity<List<FoodView>> restaurantFood(){
         return ResponseEntity.ok(foodRepository.allFoods());
     }
+
 
     @PostMapping("/add-restaurant")
     @PreAuthorize("hasRole('OWNER')")

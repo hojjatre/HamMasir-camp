@@ -5,8 +5,7 @@ import lombok.Setter;
 import org.example.model.Restaurant;
 import org.example.model.UserImp;
 
-@Getter
-@Setter
+
 public class OrderCountDTO {
 
     private Long orderCount;
@@ -22,5 +21,36 @@ public class OrderCountDTO {
         this.orderCount = orderCount;
     }
 
+    public Long getOrderCount() {
+        return orderCount;
+    }
+
+    public void setOrderCount(Long orderCount) {
+        this.orderCount = orderCount;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Long getRestaurantID() {
+        return restaurantID;
+    }
+
+    public void setRestaurantID(Long restaurantID) {
+        this.restaurantID = restaurantID;
+    }
+
+    public String getRestaurantName() {
+        return restaurantName;
+    }
+
+    public void setRestaurantName(String restaurantName) {
+        this.restaurantName = restaurantName;
+    }
 }
 
