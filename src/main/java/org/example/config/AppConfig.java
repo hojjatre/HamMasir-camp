@@ -1,8 +1,6 @@
 package org.example.config;
 
 import org.example.cachemanager.RestaurantCache;
-import org.example.dto.restaurant.RestaurantDTOredis;
-import org.example.dto.restaurant.RestaurantView;
 import org.example.model.*;
 import org.example.repository.*;
 import org.redisson.api.RedissonClient;
@@ -43,7 +41,7 @@ public class AppConfig implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        RedissonClient redissonClient = redisConfig.redissionClient();
+        RedissonClient redissonClient = redisConfig.redissonClient();
 
         Role role_user = new Role(ERole.ROLE_USER);
         roleRepository.save(role_user);

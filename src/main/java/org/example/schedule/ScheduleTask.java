@@ -43,10 +43,10 @@ public class ScheduleTask {
     @Scheduled(fixedRate = 50000)
     public void loadFoodToDatabase(){
         foodMapperRedis = FoodMapperRedis.instanse;
-        RMap<RestaurantDTOredis, RList<FoodDTOredis>> restaurantMap = restaurantCache.getRedisConfig().redissionClient()
+        RMap<RestaurantDTOredis, RList<FoodDTOredis>> restaurantMap = restaurantCache.getRedisConfig().redissonClient()
                 .getMap(NameCache.RESTAURANT_CACHE);
         for (RestaurantDTOredis res:restaurantMap.keySet()) {
-            RList<FoodDTOredis> foodRedis = restaurantCache.getRedisConfig().redissionClient()
+            RList<FoodDTOredis> foodRedis = restaurantCache.getRedisConfig().redissonClient()
                     .getList("restaurantID:"+res.getRestaurantID());
             for (int i = 0; i < foodRedis.size(); i++) {
                 Food food = foodMapperRedis.dtoTOEntity(foodRedis.get(i));

@@ -179,3 +179,132 @@ List<RestaurantView> findByFoodsDescriptionContaining(String description);
 ```
 </details>
 
+## Add Redis and Redisson
+1. Add dependency
+```xml
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.redisson</groupId>
+        <artifactId>redisson</artifactId>
+        <version>3.5.0</version>
+    </dependency>
+```
+2. Add Redis config
+```java
+    @Bean
+    public RedissonClient redissonClient() {
+        Config config = new Config();
+        config.useSingleServer()
+                .setAddress("redis://127.0.0.1:6379");
+
+        RedissonClient client = Redisson.create(config);
+        return client;
+    }
+```
+I use `RMap` that keys are `RestaurantDTOredis` and values a `RList` are `FoodDTOredis`.
+In this part I have to use `EntityGraph` and `Mapstruct`.
+- Learn about [EntityGraph](https://www.baeldung.com/jpa-entity-graph)
+- Learn about [Mapstruct](https://www.baeldung.com/mapstruct) and how add dependency.
+- I used EntityGraph in **Restaurant**
+    ```java
+    @NamedEntityGraph(
+            name = "graph.restaurant",
+            attributeNodes = {
+                    @NamedAttributeNode("restaurantID"),
+                    @NamedAttributeNode("name"),
+                    @NamedAttributeNode("location"),
+                    @NamedAttributeNode(value = "owner", subgraph = "graph.user"),
+                    @NamedAttributeNode(value = "foods", subgraph = "graph.foods"),
+            },
+            subgraphs = {
+                    @NamedSubgraph(
+                            name = "graph.foods",
+                            attributeNodes = {
+                                    @NamedAttributeNode("foodID"),
+                                    @NamedAttributeNode("name"),
+                                    @NamedAttributeNode("typeFood"),
+                                    @NamedAttributeNode("cost"),
+                                    @NamedAttributeNode("description")
+                            }
+                    ),
+                    @NamedSubgraph(
+                            name = "graph.user",
+                            attributeNodes = {
+                                    @NamedAttributeNode("username"),
+                            }
+                    )
+    
+            }
+    )
+    public class Restaurant
+    ```
+- add this entity graph in `Repository` for loading related entities or attributes
+  ```java
+      @EntityGraph(value = "graph.restaurant", type = EntityGraph.EntityGraphType.FETCH)
+      @Query("select r from Restaurant r")
+      List<RestaurantView> findAllRestaurant();
+  ```
+- Mapper for **Food**
+    ```java
+    @Mapper
+    public interface FoodMapperRedis {
+        FoodMapperRedis instanse = Mappers.getMapper(FoodMapperRedis.class);
+    
+        @Mapping(source = "foodID", target = "foodID")
+        @Mapping(source = "name", target = "name")
+        @Mapping(source = "typeFood", target = "typeFood")
+        @Mapping(source = "cost", target = "cost")
+        @Mapping(source = "description", target = "description")
+        FoodDTOredis entityToDTO(Food food);
+    
+        @Mapping(source = "foodID", target = "foodID")
+        @Mapping(source = "name", target = "name")
+        @Mapping(source = "typeFood", target = "typeFood")
+        @Mapping(source = "cost", target = "cost")
+        @Mapping(source = "description", target = "description")
+        Food dtoTOEntity(FoodDTOredis foodDTOredis);
+    }
+    ```
+- Mapper for **Restaurant**
+    ```java
+    @Mapper
+    public interface RestaurantMapperRedis {
+        RestaurantMapperRedis instance =  Mappers.getMapper(RestaurantMapperRedis.class);
+    
+        @Mapping(source = "restaurantID", target = "restaurantID")
+        @Mapping(source = "name", target = "name")
+        @Mapping(source = "location", target = "location")
+        RestaurantDTOredis entityToDTO(RestaurantView restaurantView);
+    
+    
+        @Mapping(source = "restaurantID", target = "restaurantID")
+        @Mapping(source = "name", target = "name")
+        @Mapping(source = "location", target = "location")
+        RestaurantDTOredis entityToDTO(Restaurant restaurant);
+    
+    
+    }
+    ```
+Every time a request is sent to get all restaurants, we fill or update the cache and if the owner wants to **change the cost of food**, if the restaurant exists in the cache, the operation applies to the cache. 
+After a specific time by `task schedule` database updates.
+```java
+    @Scheduled(fixedRate = 50000)
+    public void loadFoodToDatabase(){
+        foodMapperRedis = FoodMapperRedis.instanse;
+        RMap<RestaurantDTOredis, RList<FoodDTOredis>> restaurantMap = restaurantCache.getRedisConfig().redissonClient()
+                .getMap(NameCache.RESTAURANT_CACHE);
+        for (RestaurantDTOredis res:restaurantMap.keySet()) {
+            RList<FoodDTOredis> foodRedis = restaurantCache.getRedisConfig().redissonClient()
+                    .getList("restaurantID:"+res.getRestaurantID());
+            for (int i = 0; i < foodRedis.size(); i++) {
+                Food food = foodMapperRedis.dtoTOEntity(foodRedis.get(i));
+                food.setRestaurant(restaurantRepository.findByRestaurantID(res.getRestaurantID(),
+                        Restaurant.class));
+                foodRepository.save(food);
+            }
+        }
+    }
+```

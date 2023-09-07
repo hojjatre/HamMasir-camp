@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 @Mapper
-//@Component
 public interface FoodMapperRedis {
     FoodMapperRedis instanse = Mappers.getMapper(FoodMapperRedis.class);
 

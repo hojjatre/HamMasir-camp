@@ -6,16 +6,12 @@ import org.example.dto.FoodMapperRedis;
 import org.example.dto.restaurant.RestaurantDTOredis;
 import org.example.dto.restaurant.RestaurantView;
 import org.example.model.Food;
-import org.example.model.Restaurant;
 import org.example.repository.FoodRepository;
 import org.example.repository.RestaurantRepository;
 import org.redisson.api.RList;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
-import org.redisson.client.codec.Codec;
-import org.redisson.client.codec.JsonJacksonMapCodec;
 import org.redisson.codec.JsonJacksonCodec;
-import org.redisson.codec.SerializationCodec;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -56,9 +52,9 @@ public class RestaurantCache {
         List<FoodDTOredis> foodDTOredisList = new ArrayList<>();
         for (int i = 0; i < allRestaurant.size(); i++) {
             if (!first){
-                temp = redisConfig.redissionClient().getList("restaurantID:" + (i+1));
+                temp = redisConfig.redissonClient().getList("restaurantID:" + (i+1));
 
-                map = redisConfig.redissionClient().getMap(NameCache.RESTAURANT_CACHE);
+                map = redisConfig.redissonClient().getMap(NameCache.RESTAURANT_CACHE);
                 first = true;
             }
             for (int j = 0; j < allRestaurant.get(i).getFoods().size(); j++) {
@@ -78,9 +74,9 @@ public class RestaurantCache {
 
     public void addRestaurant(RestaurantDTOredis restaurantDTOredis, List<Food> food){
         foodMapperRedis = FoodMapperRedis.instanse;
-        RList<FoodDTOredis> temp = redisConfig.redissionClient().getList("restaurantID:" + restaurantDTOredis.getRestaurantID());
+        RList<FoodDTOredis> temp = redisConfig.redissonClient().getList("restaurantID:" + restaurantDTOredis.getRestaurantID());
 
-        map = redisConfig.redissionClient().getMap(NameCache.RESTAURANT_CACHE);
+        map = redisConfig.redissonClient().getMap(NameCache.RESTAURANT_CACHE);
         for (int i = 0; i < food.size(); i++) {
             temp.add(foodMapperRedis.entityToDTO(food.get(i)));
         }
@@ -89,7 +85,7 @@ public class RestaurantCache {
 
     public void removeRestaurant(RestaurantDTOredis restaurantDTOredis){
         foodMapperRedis = FoodMapperRedis.instanse;
-        RedissonClient redissonClient = redisConfig.redissionClient();
+        RedissonClient redissonClient = redisConfig.redissonClient();
         map = redissonClient.getMap(NameCache.RESTAURANT_CACHE);
         map.fastRemove(restaurantDTOredis);
         RList<FoodDTOredis> foodDTOredis = redissonClient.getList("restaurantID:"+restaurantDTOredis.getRestaurantID());
@@ -98,8 +94,8 @@ public class RestaurantCache {
 
     public RestaurantDTOredis getRestaurant(Long id){
         System.out.println("-------" + id);
-        RedissonClient redissonClient = redisConfig.redissionClient();
-        RList<FoodDTOredis> temp = redisConfig.redissionClient().getList("restaurantID:"+(id-1),
+        RedissonClient redissonClient = redisConfig.redissonClient();
+        RList<FoodDTOredis> temp = redisConfig.redissonClient().getList("restaurantID:"+(id-1),
                 new JsonJacksonCodec(FoodDTOredis.class.getClassLoader()));
 
         map = redissonClient.getMap(NameCache.RESTAURANT_CACHE);
@@ -116,7 +112,7 @@ public class RestaurantCache {
     public FoodDTOredis changeCostFood(Long foodID,int inoutCost, RestaurantDTOredis restaurantDTOredis){
         if(map.containsKey(restaurantDTOredis)){
             foodMapperRedis = FoodMapperRedis.instanse;
-            RedissonClient redissonClient = redisConfig.redissionClient();
+            RedissonClient redissonClient = redisConfig.redissonClient();
             RList<FoodDTOredis> foodDTOredis = redissonClient.getList(
                     "restaurantID:"+restaurantDTOredis.getRestaurantID()
             );
