@@ -3,6 +3,7 @@ package org.example.service;
 //import jakarta.transaction.Transactional;
 import org.example.cachemanager.RestaurantCache;
 import org.example.dto.FoodDTOredis;
+import org.example.dto.restaurant.RestaurantMapperRedis;
 import org.redisson.api.RList;
 import org.springframework.transaction.annotation.Transactional;
 import org.example.dto.restaurant.RestaurantDTO;
@@ -31,6 +32,7 @@ public class RestaurantService {
     private final UserRepository userRepository;
     private Restaurant selectRestaurant;
     private final RestaurantCache restaurantCache;
+    private RestaurantMapperRedis restaurantMapperRedis;
 
     public RestaurantService(ScheduleTask scheduleTask, RestaurantRepository restaurantRepository,
                              FoodRepository foodRepository, UserRepository userRepository, RestaurantCache restaurantCache) {
@@ -67,8 +69,11 @@ public class RestaurantService {
 
         restaurantRepository.save(restaurant);
         RestaurantView restaurantView = restaurantRepository.findRestaurant(restaurant.getRestaurantID());
+        restaurantMapperRedis = RestaurantMapperRedis.instance;
 
-        restaurantCache.addRestaurant(restaurantRepository.findRestaurantForRedis(restaurant.getRestaurantID()),
+//        restaurantCache.addRestaurant(restaurantRepository.findRestaurantForRedis(restaurant.getRestaurantID()),
+//                foodList);
+        restaurantCache.addRestaurant(restaurantMapperRedis.entityToDTO(restaurantView),
                 foodList);
         return new ResponseEntity<>(restaurantView, HttpStatus.OK);
     }
@@ -82,7 +87,8 @@ public class RestaurantService {
         }
 
         restaurantRepository.delete(selectRestaurant);
-        restaurantCache.removeRestaurant(restaurantRepository.findRestaurantForRedis(id));
+        restaurantMapperRedis = RestaurantMapperRedis.instance;
+        restaurantCache.removeRestaurant(restaurantMapperRedis.entityToDTO(selectRestaurant));
         return new ResponseEntity<>("رستوران شما با موفقیت حذف شد.", HttpStatus.OK);
     }
 
@@ -128,8 +134,8 @@ public class RestaurantService {
             selectRestaurant.getFoods().add(food);
             restaurantRepository.save(selectRestaurant);
         }
-
-        restaurantCache.removeRestaurant(restaurantRepository.findRestaurantForRedis(restaurantID));
+        restaurantMapperRedis = RestaurantMapperRedis.instance;
+        restaurantCache.removeRestaurant(restaurantMapperRedis.entityToDTO(selectRestaurant));
         return new ResponseEntity<>(restaurantRepository.findByRestaurantID(restaurantID, RestaurantView.class), HttpStatus.OK);
     }
 
@@ -150,8 +156,9 @@ public class RestaurantService {
     }
     @Transactional
     public ResponseEntity<Object> checkFoodAndChange(Restaurant restaurant, Long foodID, Integer inputCost){
+        restaurantMapperRedis = RestaurantMapperRedis.instance;
         FoodDTOredis foodDTOredis = restaurantCache.changeCostFood(foodID, inputCost,
-                restaurantRepository.findRestaurantForRedis(restaurant.getRestaurantID()));
+                restaurantMapperRedis.entityToDTO(selectRestaurant));
         if(foodDTOredis == null){
             Food food = foodRepository.findByFoodID(foodID);
             restaurant.getFoods().stream()
@@ -183,7 +190,8 @@ public class RestaurantService {
         if (!changed){
             return new ResponseEntity<>("غذای مورد نظر یافت نشد.", HttpStatus.NOT_FOUND);
         }
-        restaurantCache.removeRestaurant(restaurantRepository.findRestaurantForRedis(restaurant.getRestaurantID()));
+        restaurantMapperRedis = RestaurantMapperRedis.instance;
+        restaurantCache.removeRestaurant(restaurantMapperRedis.entityToDTO(restaurant));
         return new ResponseEntity<>(restaurantRepository.findByRestaurantID(restaurant.getRestaurantID(), RestaurantView.class), HttpStatus.OK);
     }
 
