@@ -1,4 +1,4 @@
-package org.example.dto;
+package org.example.dto.userimp;
 
 public class MessageResponse {
     private String message;

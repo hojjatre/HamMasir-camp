@@ -1,75 +1,72 @@
 package org.example.model;
 
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Entity
+@Table(name = "users",
+    uniqueConstraints = {
+            @UniqueConstraint(columnNames = "username"),
+            @UniqueConstraint(columnNames = "email")
+    }
+)
+@Getter
+@Setter
+@NoArgsConstructor
 public class UserImp {
-    private static Long id = 0L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long userID;
+
+
+    @NotBlank
+    @Column(name = "username")
+
     private String username;
+
+    @NotBlank
+    @Email
+    @Column(name = "email")
     private String email;
+    @NotBlank
+    @Column(name = "password")
     private String password;
 
-    private Set<Role> roles;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_role",
+            joinColumns = {
+                    @JoinColumn(name = "user_id")
+            },
+            inverseJoinColumns = {@JoinColumn(name = "role_id")}
+    )
+    private Set<Role> roles = new HashSet<>();
 
-    private List<Order> orders;
+    @OneToMany(mappedBy = "user_order", cascade = CascadeType.ALL)
+    private List<Order> orders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "owner", cascade = {CascadeType.REFRESH, CascadeType.DETACH,
+            CascadeType.MERGE, CascadeType.PERSIST})
+    private List<Restaurant> restaurants = new ArrayList<>();
 
 
     public UserImp(String username, String email, String password) {
-        userID = id;
-        id = id + 1;
         this.username = username;
         this.email = email;
         this.password = password;
     }
 
-    public UserImp(){}
-
-    public Long getId() {
-        return userID;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
-    }
-
-    public void addOrder(Order order){
-        orders.add(order);
-    }
 }

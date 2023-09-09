@@ -1,7 +1,7 @@
 package org.example.dto;
 
 public class MakeOrderDTO {
-    private Integer[] foodID;
+    private Long[] foodID;
 
     private String description;
 
@@ -13,16 +13,16 @@ public class MakeOrderDTO {
         this.description = description;
     }
 
-    public MakeOrderDTO(Integer[] foodID, String description) {
+    public MakeOrderDTO(Long[] foodID, String description) {
         this.foodID = foodID;
         this.description = description;
     }
 
-    public Integer[] getFoodID() {
+    public Long[] getFoodID() {
         return foodID;
     }
 
-    public void setFoodID(Integer[] foodID) {
+    public void setFoodID(Long[] foodID) {
         this.foodID = foodID;
     }
 }
