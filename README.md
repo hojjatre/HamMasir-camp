@@ -308,3 +308,50 @@ After a specific time by `task schedule` database updates.
         }
     }
 ```
+
+## Migrate to Ubuntu
+1. Run `postgresql` on **Docker**
+```dockerfile
+sudo docker run --name postgresql -e POSTGRES_PASSWORD=postgresql -p 5432:5432 -d postgres
+```
+2. Run `pgAdmin` on **Docker**
+```dockerfile
+sudo docker run --name pgadmin-container -p 5050:80 -e PGADMIN_DEFAULT_EMAIL=hojjat7878.h@gmail.com -e PGADMIN_DEFAULT_PASSWORD=postgresql -d dpage/pgadmin4
+```
+3. change settings database on `properties` file.
+4. Run `RabbitMQ`on **Docker**
+   5. I use `docker-compose`
+```dockerfile
+version: "3.6"
+
+services:
+  rabbitmq:
+    image: 'rabbitmq:3.9-management'
+    ports:
+      # The standard AMQP protocol port
+      - '5672:5672'
+      # HTTP management UI
+      - '15672:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: "hojjat"
+      RABBITMQ_DEFAULT_PASS: "hojjat"
+    networks:
+      - network
+networks:
+  network: {}
+```
+
+## Add RabbitMQ
+1. Add dependency
+```xml
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+```
+2. Learn about [Message Broker and RabbitMQ](https://geekflare.com/top-message-brokers/)
+3. Exchange Type:
+   4. **Fanout**: Sender will produce to the exchange, the exchange will duplicate the message and send it to every single queue that it knows about.
+   5. **Direct**: Sender will produce the message and then  that message will get a **routing key**, so the routing key is being compared to the **binding key** and if it's an exact match then the message will move through the system.
+   6. **Topic**: We can do partial match between the routing key and binding key. if we had a routing key on this message called `ship.shoes` and the binding key was called `ship.any` that message would get routed through to that queue.
+   7. **Default**: Is unique only to RabbitMQ. Is getting tied to the name of the queue itself.
