@@ -351,7 +351,7 @@ networks:
 ```
 2. Learn about [Message Broker and RabbitMQ](https://geekflare.com/top-message-brokers/)
 3. Exchange Type:
-   4. **Fanout**: Sender will produce to the exchange, the exchange will duplicate the message and send it to every single queue that it knows about.
-   5. **Direct**: Sender will produce the message and then  that message will get a **routing key**, so the routing key is being compared to the **binding key** and if it's an exact match then the message will move through the system.
-   6. **Topic**: We can do partial match between the routing key and binding key. if we had a routing key on this message called `ship.shoes` and the binding key was called `ship.any` that message would get routed through to that queue.
-   7. **Default**: Is unique only to RabbitMQ. Is getting tied to the name of the queue itself.
+   - **Fanout**: Sender will produce to the exchange, the exchange will duplicate the message and send it to every single queue that it knows about.
+   - **Direct**: Sender will produce the message and then  that message will get a **routing key**, so the routing key is being compared to the **binding key** and if it's an exact match then the message will move through the system.
+   - **Topic**: We can do partial match between the routing key and binding key. if we had a routing key on this message called `ship.shoes` and the binding key was called `ship.any` that message would get routed through to that queue.
+   - **Default**: Is unique only to RabbitMQ. Is getting tied to the name of the queue itself.
