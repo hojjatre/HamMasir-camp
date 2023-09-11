@@ -355,3 +355,19 @@ networks:
    - **Direct**: Sender will produce the message and then  that message will get a **routing key**, so the routing key is being compared to the **binding key** and if it's an exact match then the message will move through the system.
    - **Topic**: We can do partial match between the routing key and binding key. if we had a routing key on this message called `ship.shoes` and the binding key was called `ship.any` that message would get routed through to that queue.
    - **Default**: Is unique only to RabbitMQ. Is getting tied to the name of the queue itself.
+
+## Add PostGIS
+We need go inside to the container of Docker.
+```shell
+sudo docker exec -it postgresql bash
+```
+```shell
+apt update
+```
+```shell
+apt install postgis
+```
+- after that we go the pgAdmin and select our database and write this query
+```postgresql
+CREATE EXTENSION postgis
+```
