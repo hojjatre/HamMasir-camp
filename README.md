@@ -371,3 +371,61 @@ apt install postgis
 ```postgresql
 CREATE EXTENSION postgis
 ```
+## Dockerize
+We need dockerize all of our project, in order that we use `docker-compose`
+```dockerfile
+version: '3.6'
+services:
+  database:
+    image: 'postgres'
+    container_name: postgresql
+
+    ports:
+      - "5432:5432"
+    
+    environment:
+      - POSTGRES_DB=restaurant
+      - POSTGRES_PASSWORD=postgresql
+  
+  pgadmin:
+    image: 'dpage/pgadmin4'
+    container_name: pgadmin-container-1
+
+    ports:
+      - "5050:80"
+    
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=hojjat7878.h@gmail.com 
+      - PGADMIN_DEFAULT_PASSWORD=postgresql
+
+  
+  redis:
+    image: redis
+    container_name: restaurant-redis-1
+    ports:
+      - "6379:6379"
+    
+  rabbitmq:
+    image: 'rabbitmq:3.9-management'
+    container_name: rabbitmq
+    ports:
+      # The standard AMQP protocol port
+      - '5672:5672'
+      # HTTP management UI
+      - '15672:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: "hojjat"
+      RABBITMQ_DEFAULT_PASS: "hojjat"
+
+
+  spring-app:
+    build:
+      context: ./HamMasir-camp
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+      - rabbitmq
+      - database
+```
