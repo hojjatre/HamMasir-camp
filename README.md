@@ -179,3 +179,253 @@ List<RestaurantView> findByFoodsDescriptionContaining(String description);
 ```
 </details>
 
+## Add Redis and Redisson
+1. Add dependency
+```xml
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.redisson</groupId>
+        <artifactId>redisson</artifactId>
+        <version>3.5.0</version>
+    </dependency>
+```
+2. Add Redis config
+```java
+    @Bean
+    public RedissonClient redissonClient() {
+        Config config = new Config();
+        config.useSingleServer()
+                .setAddress("redis://127.0.0.1:6379");
+
+        RedissonClient client = Redisson.create(config);
+        return client;
+    }
+```
+I use `RMap` that keys are `RestaurantDTOredis` and values a `RList` are `FoodDTOredis`.
+In this part I have to use `EntityGraph` and `Mapstruct`.
+- Learn about [EntityGraph](https://www.baeldung.com/jpa-entity-graph)
+- Learn about [Mapstruct](https://www.baeldung.com/mapstruct) and how add dependency.
+- I used EntityGraph in **Restaurant**
+    ```java
+    @NamedEntityGraph(
+            name = "graph.restaurant",
+            attributeNodes = {
+                    @NamedAttributeNode("restaurantID"),
+                    @NamedAttributeNode("name"),
+                    @NamedAttributeNode("location"),
+                    @NamedAttributeNode(value = "owner", subgraph = "graph.user"),
+                    @NamedAttributeNode(value = "foods", subgraph = "graph.foods"),
+            },
+            subgraphs = {
+                    @NamedSubgraph(
+                            name = "graph.foods",
+                            attributeNodes = {
+                                    @NamedAttributeNode("foodID"),
+                                    @NamedAttributeNode("name"),
+                                    @NamedAttributeNode("typeFood"),
+                                    @NamedAttributeNode("cost"),
+                                    @NamedAttributeNode("description")
+                            }
+                    ),
+                    @NamedSubgraph(
+                            name = "graph.user",
+                            attributeNodes = {
+                                    @NamedAttributeNode("username"),
+                            }
+                    )
+    
+            }
+    )
+    public class Restaurant
+    ```
+- add this entity graph in `Repository` for loading related entities or attributes
+  ```java
+      @EntityGraph(value = "graph.restaurant", type = EntityGraph.EntityGraphType.FETCH)
+      @Query("select r from Restaurant r")
+      List<RestaurantView> findAllRestaurant();
+  ```
+- Mapper for **Food**
+    ```java
+    @Mapper
+    public interface FoodMapperRedis {
+        FoodMapperRedis instanse = Mappers.getMapper(FoodMapperRedis.class);
+    
+        @Mapping(source = "foodID", target = "foodID")
+        @Mapping(source = "name", target = "name")
+        @Mapping(source = "typeFood", target = "typeFood")
+        @Mapping(source = "cost", target = "cost")
+        @Mapping(source = "description", target = "description")
+        FoodDTOredis entityToDTO(Food food);
+    
+        @Mapping(source = "foodID", target = "foodID")
+        @Mapping(source = "name", target = "name")
+        @Mapping(source = "typeFood", target = "typeFood")
+        @Mapping(source = "cost", target = "cost")
+        @Mapping(source = "description", target = "description")
+        Food dtoTOEntity(FoodDTOredis foodDTOredis);
+    }
+    ```
+- Mapper for **Restaurant**
+    ```java
+    @Mapper
+    public interface RestaurantMapperRedis {
+        RestaurantMapperRedis instance =  Mappers.getMapper(RestaurantMapperRedis.class);
+    
+        @Mapping(source = "restaurantID", target = "restaurantID")
+        @Mapping(source = "name", target = "name")
+        @Mapping(source = "location", target = "location")
+        RestaurantDTOredis entityToDTO(RestaurantView restaurantView);
+    
+    
+        @Mapping(source = "restaurantID", target = "restaurantID")
+        @Mapping(source = "name", target = "name")
+        @Mapping(source = "location", target = "location")
+        RestaurantDTOredis entityToDTO(Restaurant restaurant);
+    
+    
+    }
+    ```
+Every time a request is sent to get all restaurants, we fill or update the cache and if the owner wants to **change the cost of food**, if the restaurant exists in the cache, the operation applies to the cache. 
+After a specific time by `task schedule` database updates.
+```java
+    @Scheduled(fixedRate = 50000)
+    public void loadFoodToDatabase(){
+        foodMapperRedis = FoodMapperRedis.instanse;
+        RMap<RestaurantDTOredis, RList<FoodDTOredis>> restaurantMap = restaurantCache.getRedisConfig().redissonClient()
+                .getMap(NameCache.RESTAURANT_CACHE);
+        for (RestaurantDTOredis res:restaurantMap.keySet()) {
+            RList<FoodDTOredis> foodRedis = restaurantCache.getRedisConfig().redissonClient()
+                    .getList("restaurantID:"+res.getRestaurantID());
+            for (int i = 0; i < foodRedis.size(); i++) {
+                Food food = foodMapperRedis.dtoTOEntity(foodRedis.get(i));
+                food.setRestaurant(restaurantRepository.findByRestaurantID(res.getRestaurantID(),
+                        Restaurant.class));
+                foodRepository.save(food);
+            }
+        }
+    }
+```
+
+## Migrate to Ubuntu
+1. Run `postgresql` on **Docker**
+```dockerfile
+sudo docker run --name postgresql -e POSTGRES_PASSWORD=postgresql -p 5432:5432 -d postgres
+```
+2. Run `pgAdmin` on **Docker**
+```dockerfile
+sudo docker run --name pgadmin-container -p 5050:80 -e PGADMIN_DEFAULT_EMAIL=hojjat7878.h@gmail.com -e PGADMIN_DEFAULT_PASSWORD=postgresql -d dpage/pgadmin4
+```
+3. change settings database on `properties` file.
+4. Run `RabbitMQ`on **Docker**
+   5. I use `docker-compose`
+```dockerfile
+version: "3.6"
+
+services:
+  rabbitmq:
+    image: 'rabbitmq:3.9-management'
+    ports:
+      # The standard AMQP protocol port
+      - '5672:5672'
+      # HTTP management UI
+      - '15672:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: "hojjat"
+      RABBITMQ_DEFAULT_PASS: "hojjat"
+    networks:
+      - network
+networks:
+  network: {}
+```
+
+## Add RabbitMQ
+1. Add dependency
+```xml
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+```
+2. Learn about [Message Broker and RabbitMQ](https://geekflare.com/top-message-brokers/)
+3. Exchange Type:
+   - **Fanout**: Sender will produce to the exchange, the exchange will duplicate the message and send it to every single queue that it knows about.
+   - **Direct**: Sender will produce the message and then  that message will get a **routing key**, so the routing key is being compared to the **binding key** and if it's an exact match then the message will move through the system.
+   - **Topic**: We can do partial match between the routing key and binding key. if we had a routing key on this message called `ship.shoes` and the binding key was called `ship.any` that message would get routed through to that queue.
+   - **Default**: Is unique only to RabbitMQ. Is getting tied to the name of the queue itself.
+
+## Add PostGIS
+We need go inside to the container of Docker.
+```shell
+sudo docker exec -it postgresql bash
+```
+```shell
+apt update
+```
+```shell
+apt install postgis
+```
+- after that we go the pgAdmin and select our database and write this query
+```postgresql
+CREATE EXTENSION postgis
+```
+## Dockerize
+We need dockerize all of our project, in order that we use `docker-compose`
+```dockerfile
+version: '3.6'
+services:
+  database:
+    image: 'postgres'
+    container_name: postgresql
+
+    ports:
+      - "5432:5432"
+    
+    environment:
+      - POSTGRES_DB=restaurant
+      - POSTGRES_PASSWORD=postgresql
+  
+  pgadmin:
+    image: 'dpage/pgadmin4'
+    container_name: pgadmin-container-1
+
+    ports:
+      - "5050:80"
+    
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=hojjat7878.h@gmail.com 
+      - PGADMIN_DEFAULT_PASSWORD=postgresql
+
+  
+  redis:
+    image: redis
+    container_name: restaurant-redis-1
+    ports:
+      - "6379:6379"
+    
+  rabbitmq:
+    image: 'rabbitmq:3.9-management'
+    container_name: rabbitmq
+    ports:
+      # The standard AMQP protocol port
+      - '5672:5672'
+      # HTTP management UI
+      - '15672:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: "hojjat"
+      RABBITMQ_DEFAULT_PASS: "hojjat"
+
+
+  spring-app:
+    build:
+      context: ./HamMasir-camp
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+      - rabbitmq
+      - database
+```

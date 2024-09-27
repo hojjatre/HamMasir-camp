@@ -11,9 +11,35 @@ import java.util.List;
 
 @Entity
 @Table(name = "restaurant")
-@Getter
-@Setter
-@NoArgsConstructor
+@NamedEntityGraph(
+        name = "graph.restaurant",
+        attributeNodes = {
+                @NamedAttributeNode("restaurantID"),
+                @NamedAttributeNode("name"),
+                @NamedAttributeNode("location"),
+                @NamedAttributeNode(value = "owner", subgraph = "graph.user"),
+                @NamedAttributeNode(value = "foods", subgraph = "graph.foods"),
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "graph.foods",
+                        attributeNodes = {
+                                @NamedAttributeNode("foodID"),
+                                @NamedAttributeNode("name"),
+                                @NamedAttributeNode("typeFood"),
+                                @NamedAttributeNode("cost"),
+                                @NamedAttributeNode("description")
+                        }
+                ),
+                @NamedSubgraph(
+                        name = "graph.user",
+                        attributeNodes = {
+                                @NamedAttributeNode("username"),
+                        }
+                )
+
+        }
+)
 public class Restaurant {
 
     @Id
@@ -32,7 +58,7 @@ public class Restaurant {
     private String location;
 
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id")
 //    @OneToMany(cascade = CascadeType.ALL, mappedBy = "restaurant")
     private List<Food> foods;
@@ -48,6 +74,8 @@ public class Restaurant {
         this.foods = foods;
     }
 
+    public Restaurant() {
+    }
 
     public void addFood(Food food){
         this.foods.add(food);
@@ -57,4 +85,51 @@ public class Restaurant {
         this.foods.remove(food);
     }
 
+    public Long getRestaurantID() {
+        return restaurantID;
+    }
+
+    public void setRestaurantID(Long restaurantID) {
+        this.restaurantID = restaurantID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public UserImp getOwner() {
+        return owner;
+    }
+
+    public void setOwner(UserImp owner) {
+        this.owner = owner;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public List<Food> getFoods() {
+        return foods;
+    }
+
+    public void setFoods(List<Food> foods) {
+        this.foods = foods;
+    }
+
+    public List<Order> getOrder() {
+        return order;
+    }
+
+    public void setOrder(List<Order> order) {
+        this.order = order;
+    }
 }

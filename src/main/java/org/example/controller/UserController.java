@@ -1,11 +1,13 @@
 package org.example.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import org.example.config.AppConfig;
 import org.example.dto.userimp.LoginRequest;
 import org.example.dto.userimp.RegistrationRequest;
 import org.example.dto.userimp.UserInfoResponse;
+import org.example.dto.userimp.UserMapperRabbit;
 import org.example.model.ERole;
 import org.example.model.Role;
 import org.example.model.UserImp;
@@ -13,8 +15,10 @@ import org.example.repository.RoleRepository;
 import org.example.repository.UserRepository;
 import org.example.schedule.ScheduleTask;
 import org.example.security.JwtUtilities;
+import org.example.service.ProduceMessageService;
 import org.example.service.UserDetailsImpl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,7 +32,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/user/auth")
+@RequestMapping(value = "/api/user/auth",
+produces = MediaType.APPLICATION_JSON_VALUE,
+consumes = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
     private final AuthenticationManager authenticationManager;
 
@@ -46,12 +52,14 @@ public class UserController {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
 
+    private final ProduceMessageService produceMessageService;
 
+    private UserMapperRabbit userMapperRabbit;
 
     public UserController(AuthenticationManager authenticationManager,
                           ScheduleTask scheduleTask, AppConfig appConfig,
                           PasswordEncoder encoder, JwtUtilities jwtUtilities,
-                          UserRepository userRepository, RoleRepository roleRepository) {
+                          UserRepository userRepository, RoleRepository roleRepository, ProduceMessageService produceMessageService) {
         this.authenticationManager = authenticationManager;
         this.appConfig = appConfig;
         this.encoder = encoder;
@@ -59,6 +67,7 @@ public class UserController {
         codeVerification = scheduleTask.getCodeVerification();
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.produceMessageService = produceMessageService;
     }
 
     @PostMapping("/login")
@@ -139,6 +148,12 @@ public class UserController {
 
         user.setRoles(roles);
         userRepository.save(user);
+        userMapperRabbit = UserMapperRabbit.instance;
+        try {
+            produceMessageService.sendUserRegistered(userMapperRabbit.entityToRabbit(user));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         return ResponseEntity.ok(registrationRequest.getUsername() + " registered successfully!");
     }
 }
